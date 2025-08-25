@@ -36,6 +36,8 @@ message Data {
     google.protobuf.Duration read_timeout = 3;
     google.protobuf.Duration write_timeout = 4;
   }
-  Database database = 1;
+  // databases存储多个数据库
+  map<string,Database> databases = 1;
   Redis redis = 2;
+  
 }

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	pb "kratos-community/api/user/v1"
-	"kratos-community/internal/biz"
+	"kratos-community/internal/user/biz"
 )
 
 type UserService struct {

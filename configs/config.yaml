@@ -6,9 +6,13 @@ server:
     addr: 0.0.0.0:9000
     timeout: 1s
 data:
-  database:
-    driver: mysql
-    source: root:root@tcp(127.0.0.1:3306)/test?parseTime=True&loc=Local
+  # database:
+  #   driver: mysql
+  #   source: root:root@tcp(127.0.0.1:3306)/test?parseTime=True&loc=Local
+  databases:
+    user_1:
+      driver: mysql
+      source: user1:112233@tcp(192.168.192.1:3310)/kratos_community_user?charset=utf8mb4&parseTime=True&loc=Local
   redis:
     addr: 127.0.0.1:6379
     read_timeout: 0.2s

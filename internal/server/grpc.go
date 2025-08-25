@@ -1,10 +1,9 @@
 package server
 
 import (
-	helloworldv1 "kratos-community/api/helloworld/v1"
 	userV1 "kratos-community/api/user/v1"
 	"kratos-community/internal/conf"
-	"kratos-community/internal/service"
+	"kratos-community/internal/user/service"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
@@ -12,7 +11,7 @@ import (
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(c *conf.Server, greeter *service.GreeterService, user *service.UserService, logger log.Logger) *grpc.Server {
+func NewGRPCServer(c *conf.Server, user *service.UserService, logger log.Logger) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
@@ -28,7 +27,6 @@ func NewGRPCServer(c *conf.Server, greeter *service.GreeterService, user *servic
 		opts = append(opts, grpc.Timeout(c.Grpc.Timeout.AsDuration()))
 	}
 	srv := grpc.NewServer(opts...)
-	helloworldv1.RegisterGreeterServer(srv, greeter)
 	userV1.RegisterUserServer(srv, user)
 	return srv
 }

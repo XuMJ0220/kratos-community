@@ -3,7 +3,7 @@ CREATE TABLE `users`(
     `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     `user_name` VARCHAR(30) COLLATE utf8mb4_bin NOT NULL COMMENT '用户名',
     `password` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '密码',
-    `email` VARCHAR(30) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '邮箱',
+    `email` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '邮箱',
     `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     `deleted_at` timestamp NULL DEFAULT NULL COMMENT '删除时间（用于软删除）',
