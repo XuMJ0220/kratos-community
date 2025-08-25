@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package api.user.v1;
+
+option go_package = "kratos-community/api/user/v1;v1";
+
+import "google/api/annotations.proto";
+// 关键：导入 validate 工具的 proto 文件
+import "validate/validate.proto";
+
+// 定义 User 服务
+service User {
+    // 用户注册
+    rpc RegisterUser(RegisterUserRequest) returns(RegisterUserReply){
+        option (google.api.http) = {
+            post: "/v1/auth/register",
+            body: "*"
+        };
+    }
+    // 用户登录
+    rpc Login(LoginRequest) returns(LoginReply){
+        option (google.api.http) = {
+            post: "/v1/auth/login",
+            body: "*"
+        };
+    }
+}
+
+// 用户信息结构体
+message UserInfo{
+    uint64 id = 1;
+    string user_name = 2;
+    string email = 3;
+}
+
+// 用户注册请求结构体
+message RegisterUserRequest{
+    string user_name = 1 [(validate.rules).string = {min_len: 3, max_len: 16}]; 
+    string password = 2 [(validate.rules).string = {min_len: 6, max_len: 16}];
+    string email = 3 [(validate.rules).string.email = true];
+    string re_password = 4 [(validate.rules).string = {min_len: 6, max_len: 16}];
+}
+
+message RegisterUserReply{
+}
+
+message LoginRequest{
+    string user_name = 1 [(validate.rules).string.min_len = 1];
+    string password = 2 [(validate.rules).string.min_len = 1];
+}
+
+message LoginReply{
+    string token = 1;
+    UserInfo user_info = 2;
+}

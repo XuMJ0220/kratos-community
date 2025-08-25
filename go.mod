@@ -5,6 +5,7 @@ go 1.21
 toolchain go1.22.6
 
 require (
+	github.com/envoyproxy/protoc-gen-validate v1.0.4
 	github.com/go-kratos/kratos/v2 v2.8.0
 	github.com/google/wire v0.6.0
 	go.uber.org/automaxprocs v1.5.1

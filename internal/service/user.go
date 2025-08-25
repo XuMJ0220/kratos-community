@@ -1,0 +1,30 @@
+package service
+
+import (
+	"context"
+
+	pb "kratos-community/api/user/v1"
+	"kratos-community/internal/biz"
+)
+
+type UserService struct {
+	pb.UnimplementedUserServer
+
+	uc *biz.UserUsecase
+}
+
+func NewUserService(uc *biz.UserUsecase) *UserService {
+	return &UserService{uc: uc}
+}
+
+func (s *UserService) RegisterUser(ctx context.Context, req *pb.RegisterUserRequest) (*pb.RegisterUserReply, error) {
+
+	ru := biz.NewRegisterUser(req.UserName, req.Password, req.Email, req.RePassword)
+	if err := s.uc.RegisterUser(ctx, ru); err != nil {
+		return nil, err
+	}
+	return &pb.RegisterUserReply{}, nil
+}
+func (s *UserService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginReply, error) {
+	return &pb.LoginReply{}, nil
+}
