@@ -1,4 +1,4 @@
--- Active: 1756093646829@@192.168.192.1@3310@kratos_community_user
+-- Active: 1756188174936@@192.168.192.1@3310@kratos_community_user
 CREATE TABLE `users`(
     `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     `user_name` VARCHAR(30) COLLATE utf8mb4_bin NOT NULL COMMENT '用户名',

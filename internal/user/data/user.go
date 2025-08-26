@@ -49,19 +49,19 @@ func (r *userRepo) CreateUser(ctx context.Context, ru *biz.RegisterUser) error {
 func (r *userRepo) GetUserByUserName(ctx context.Context, userName string) (*biz.GetUserResponse, error) {
 
 	// 查询
-	user, err := gorm.G[User](r.data.db1).First(ctx)
-	
-	if err!=nil{
-		r.log.Errorf("GetUserByUserName: %v", err) // 输出错误日志
+	user, err := gorm.G[User](r.data.db1).Where("user_name = ?", userName).First(ctx)
+
+	if err != nil {
+		r.log.Errorf("GetUserByUserName: %v", err)  // 输出错误日志
 		if errors.Is(err, gorm.ErrRecordNotFound) { // 不存在该行数据
 			return nil, biz.ErrUserNotFound
-		}else{ // 其他错误
-			return nil,err 
+		} else { // 其他错误
+			return nil, err
 		}
 	}
 
 	return &biz.GetUserResponse{
-		UserInfo:v1.UserInfo{
+		UserInfo: v1.UserInfo{
 			Id:       user.ID,
 			UserName: user.UserName,
 			Email:    user.Email,

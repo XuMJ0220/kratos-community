@@ -1,9 +1,7 @@
 package server
 
 import (
-	userV1 "kratos-community/api/user/v1"
 	"kratos-community/internal/conf"
-	"kratos-community/internal/user/service"
 
 	"github.com/go-kratos/kratos/v2/log"
 	jwt "github.com/go-kratos/kratos/v2/middleware/auth/jwt"
@@ -15,7 +13,7 @@ import (
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Server, user *service.UserService, auth *conf.Auth, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Server, auth *conf.Auth, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
@@ -45,6 +43,5 @@ func NewHTTPServer(c *conf.Server, user *service.UserService, auth *conf.Auth, l
 		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
 	}
 	srv := http.NewServer(opts...)
-	userV1.RegisterUserHTTPServer(srv, user)
 	return srv
 }

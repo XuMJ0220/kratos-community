@@ -5,6 +5,8 @@ import (
 	"os"
 
 	"kratos-community/internal/conf"
+	"kratos-community/internal/user/service"
+	userv1 "kratos-community/api/user/v1"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
@@ -33,7 +35,11 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
+func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server,us *service.UserService) *kratos.App {
+
+	userv1.RegisterUserServer(gs, us)
+	userv1.RegisterUserHTTPServer(hs, us)
+
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),

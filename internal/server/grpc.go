@@ -1,20 +1,18 @@
 package server
 
 import (
-	userV1 "kratos-community/api/user/v1"
 	"kratos-community/internal/conf"
-	"kratos-community/internal/user/service"
 
 	"github.com/go-kratos/kratos/v2/log"
+	jwt "github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
-	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/middleware/selector"
-    jwt "github.com/go-kratos/kratos/v2/middleware/auth/jwt"
-    jwtv5 "github.com/golang-jwt/jwt/v5"
+	"github.com/go-kratos/kratos/v2/transport/grpc"
+	jwtv5 "github.com/golang-jwt/jwt/v5"
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(c *conf.Server, user *service.UserService, auth *conf.Auth, logger log.Logger) *grpc.Server {
+func NewGRPCServer(c *conf.Server, auth *conf.Auth, logger log.Logger) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
@@ -42,6 +40,5 @@ func NewGRPCServer(c *conf.Server, user *service.UserService, auth *conf.Auth, l
 		opts = append(opts, grpc.Timeout(c.Grpc.Timeout.AsDuration()))
 	}
 	srv := grpc.NewServer(opts...)
-	userV1.RegisterUserServer(srv, user)
 	return srv
 }
