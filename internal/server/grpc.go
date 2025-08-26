@@ -28,6 +28,7 @@ func NewGRPCServer(c *conf.Server, auth *conf.Auth, logger log.Logger) *grpc.Ser
 		).Path(
 		//往这里添加，例如
 		//"/api.user.v1.User/RegisterUser"
+		"/api.content.v1.Content/CreateArticle",
 		).Build(),
 	))
 	if c.Grpc.Network != "" {

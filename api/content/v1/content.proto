@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package api.content.v1;
+
+option go_package = "kratos-community/api/content/v1;v1";
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+
+// 定义 Content 服务
+service Content{
+    rpc CreateArticle(CreateArticleRequest) returns (CreateArticleReply){
+        option (google.api.http) = {
+            post:"/v1/articles",
+            body:"*"
+        };
+    }
+}
+
+
+message Article{
+    uint64 id = 1;
+    string title = 2;
+    string content = 3;
+    uint64 author_id = 4;
+    google.protobuf.Timestamp created_at = 5;
+    google.protobuf.Timestamp updated_at = 6;
+}
+
+// 创建文章请求体
+message CreateArticleRequest{
+    string title = 1 [(validate.rules).string = {min_len: 1, max_len: 100}];
+    string content = 2 [(validate.rules).string.min_len = 1];
+}
+
+// 创建文章响应体
+message CreateArticleReply {
+    Article article = 1;
+}

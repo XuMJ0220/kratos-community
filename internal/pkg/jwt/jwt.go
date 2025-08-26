@@ -7,8 +7,8 @@ import (
 )
 
 type customClaims struct {
-	UserId               uint64
-	UserName             string
+	UserId               uint64 `json:"user_id"` // 用了标签，以后如果从jwt解析，就是用的user_id就可以了
+	UserName             string `json:"user_name"`
 	jwt.RegisteredClaims // 内嵌注册声明
 }
 
