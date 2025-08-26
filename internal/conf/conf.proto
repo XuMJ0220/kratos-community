@@ -8,6 +8,7 @@ import "google/protobuf/duration.proto";
 message Bootstrap {
   Server server = 1;
   Data data = 2;
+  Auth auth = 3;
 }
 
 message Server {
@@ -38,6 +39,9 @@ message Data {
   }
   // databases存储多个数据库
   map<string,Database> databases = 1;
-  Redis redis = 2;
-  
+  Redis redis = 2;  
+}
+
+message Auth{
+  string jwt_secret = 1;
 }

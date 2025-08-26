@@ -26,5 +26,12 @@ func (s *UserService) RegisterUser(ctx context.Context, req *pb.RegisterUserRequ
 	return &pb.RegisterUserReply{}, nil
 }
 func (s *UserService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginReply, error) {
-	return &pb.LoginReply{}, nil
+	r, err := s.uc.Login(ctx, req.UserName, req.Password)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.LoginReply{
+		Token:    r.Token,
+		UserInfo: r.UserInfo,
+	}, nil
 }

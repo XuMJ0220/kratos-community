@@ -17,3 +17,5 @@ data:
     addr: 127.0.0.1:6379
     read_timeout: 0.2s
     write_timeout: 0.2s
+auth:
+  jwt_secret: ASDFLJKNG@IR!W4RE5@6%T63&#M84*$p%4G835YGZY
