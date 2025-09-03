@@ -16,6 +16,26 @@ service Content{
             body:"*"
         };
     }
+
+    rpc GetArticle(GetArticleRequest)returns (GetArticleReply){
+        // 这里只要id和GetArticleRequest中的id名字一样，就能自动对应上，而且类型可以自动转换
+        option (google.api.http) = {
+            get:"v1/articles/{id}" 
+        };
+    }
+
+    rpc UpdateArticle(UpdateArticleRequest)returns(UpdateArticleReply){
+        option (google.api.http) = {
+            put:"v1/articles/{id}",
+            body:"*"
+        };
+    }
+
+    rpc DeleteArticle(DeleteArticleRequest)returns (DeleteArticlReply){
+        option (google.api.http) = {
+            delete:"v1/articles/{id}",
+        };
+    }
 }
 
 
@@ -32,9 +52,43 @@ message Article{
 message CreateArticleRequest{
     string title = 1 [(validate.rules).string = {min_len: 1, max_len: 100}];
     string content = 2 [(validate.rules).string.min_len = 1];
+    uint64 author_id = 3;
 }
 
 // 创建文章响应体
 message CreateArticleReply {
     Article article = 1;
+}
+
+// 获得文章请求体
+message GetArticleRequest{
+    uint64 id = 1[(validate.rules).uint64.gt = 0];
+}
+
+// 获得文章响应体
+message GetArticleReply{
+    Article article = 1;
+}
+
+// 更新文章请求体
+message UpdateArticleRequest{
+    uint64 id = 1 [(validate.rules).uint64.gt = 0];
+    string title = 2 [(validate.rules).string = {min_len: 1, max_len: 100}];
+    string content = 3 [(validate.rules).string.min_len = 1];
+    uint64 author_id = 4;
+}
+
+// 更新文章响应体
+message UpdateArticleReply{
+    Article article = 1;
+}
+
+// 删除文章请求体
+message DeleteArticleRequest{
+    uint64 id = 1 [(validate.rules).uint64.gt = 0];
+    uint64 author_id = 2;
+}
+
+// 删除文章响应体
+message DeleteArticlReply{
 }

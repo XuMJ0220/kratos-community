@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	v1 "kratos-community/api/content/v1"
+	v1 "kratos-community/api/gateway/v1"
 	"kratos-community/internal/conf"
-	"kratos-community/internal/content/service"
+	"kratos-community/internal/gateway/service"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
@@ -15,7 +15,6 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
-	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 
 	_ "go.uber.org/automaxprocs"
@@ -24,7 +23,7 @@ import (
 // go build -ldflags "-X main.Version=x.y.z"
 var (
 	// Name is the name of the compiled software.
-	Name string = "content-service"
+	Name string = "gateway-service"
 	// Version is the version of the compiled software.
 	Version string
 	// flagconf is the config flag.
@@ -41,11 +40,10 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server, cs *service.ContentService, r registry.Registrar) *kratos.App {
+func newApp(logger log.Logger, hs *http.Server, gs *service.GatewayService, r registry.Registrar) *kratos.App {
 
 	// 往服务器上注册服务
-	v1.RegisterContentServer(gs, cs)
-	v1.RegisterContentHTTPServer(hs, cs)
+	v1.RegisterGatewayHTTPServer(hs, gs)
 
 	return kratos.New(
 		kratos.ID(id),
@@ -54,7 +52,6 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server, cs *service.Con
 		kratos.Metadata(map[string]string{}),
 		kratos.Logger(logger),
 		kratos.Server(
-			gs,
 			hs,
 		),
 		kratos.Registrar(r),
@@ -88,7 +85,7 @@ func main() {
 		panic(err)
 	}
 
-	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.Auth, bc.Registry, logger)
+	app, cleanup, err := wireApp(bc.Server, bc.Registry, bc.Auth, logger)
 	if err != nil {
 		panic(err)
 	}

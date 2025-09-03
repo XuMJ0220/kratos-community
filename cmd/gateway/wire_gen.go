@@ -10,11 +10,10 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"kratos-community/internal/conf"
+	"kratos-community/internal/gateway/client"
+	"kratos-community/internal/gateway/service"
 	"kratos-community/internal/registry"
 	"kratos-community/internal/server"
-	"kratos-community/internal/user/biz"
-	"kratos-community/internal/user/data"
-	"kratos-community/internal/user/service"
 )
 
 import (
@@ -24,19 +23,20 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, confRegistry *conf.Registry, logger log.Logger) (*kratos.App, func(), error) {
-	grpcServer := server.NewGRPCServer(confServer, auth, logger)
+func wireApp(confServer *conf.Server, confRegistry *conf.Registry, auth *conf.Auth, logger log.Logger) (*kratos.App, func(), error) {
 	httpServer := server.NewHTTPServer(confServer, auth, logger)
-	dataData, cleanup, err := data.NewData(confData, logger)
+	discovery := registry.NewDiscovery(confRegistry)
+	userClient, err := client.NewUserServiceClient(discovery)
 	if err != nil {
 		return nil, nil, err
 	}
-	userRepo := data.NewUserRepo(dataData, logger)
-	userUsecase := biz.NewUserUsecase(userRepo, logger, auth)
-	userService := service.NewUserService(userUsecase)
+	contentClient, err := client.NewContentServiceClient(discovery)
+	if err != nil {
+		return nil, nil, err
+	}
+	gatewayService := service.NewGatewayService(userClient, contentClient)
 	registrar := registry.NewRegistry(confRegistry)
-	app := newApp(logger, grpcServer, httpServer, userService, registrar)
+	app := newApp(logger, httpServer, gatewayService, registrar)
 	return app, func() {
-		cleanup()
 	}, nil
 }

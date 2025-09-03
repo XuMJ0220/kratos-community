@@ -3,19 +3,74 @@
 
 openapi: 3.0.3
 info:
-    title: Greeter API
-    description: The greeting service definition.
+    title: ""
     version: 0.0.1
 paths:
-    /helloworld/{name}:
+    /v1/articles:
+        post:
+            tags:
+                - Gateway
+            description: 转发到 Content 服务的 CreateArticle 接口
+            operationId: Gateway_CreateArticle
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.content.v1.CreateArticleRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.content.v1.CreateArticleReply'
+    /v1/auth/login:
+        post:
+            tags:
+                - Gateway
+            description: 转发到 User 服务的 Login 接口
+            operationId: Gateway_Login
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.user.v1.LoginRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.user.v1.LoginReply'
+    /v1/auth/register:
+        post:
+            tags:
+                - Gateway
+            description: 转发到 User 服务的 Register 接口
+            operationId: Gateway_RegisterUser
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.user.v1.RegisterUserRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.user.v1.RegisterUserReply'
+    v1/articles/{id}:
         get:
             tags:
-                - Greeter
-                - subgroup
-            description: Sends a greeting
-            operationId: Greeter_SayHello
+                - Gateway
+            description: 转发到 Content 服务的 CreateArticle 接口
+            operationId: Gateway_GetArticle
             parameters:
-                - name: name
+                - name: id
                   in: path
                   required: true
                   schema:
@@ -26,14 +81,159 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/helloworld.v1.HelloReply'
+                                $ref: '#/components/schemas/api.content.v1.GetArticleReply'
+        put:
+            tags:
+                - Gateway
+            description: 转发到 Content 服务的 UpdateArticle 接口
+            operationId: Gateway_UpdateArticle
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.content.v1.UpdateArticleRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.content.v1.UpdateArticleReply'
+        delete:
+            tags:
+                - Gateway
+            description: 转发到 Content 服务的 DeleteArticle 接口
+            operationId: Gateway_DeleteArticle
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: authorId
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.content.v1.DeleteArticlReply'
 components:
     schemas:
-        helloworld.v1.HelloReply:
+        api.content.v1.Article:
             type: object
             properties:
-                message:
+                id:
                     type: string
-            description: The response message containing the greetings
+                title:
+                    type: string
+                content:
+                    type: string
+                authorId:
+                    type: string
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+        api.content.v1.CreateArticleReply:
+            type: object
+            properties:
+                article:
+                    $ref: '#/components/schemas/api.content.v1.Article'
+            description: 创建文章响应体
+        api.content.v1.CreateArticleRequest:
+            type: object
+            properties:
+                title:
+                    type: string
+                content:
+                    type: string
+                authorId:
+                    type: string
+            description: 创建文章请求体
+        api.content.v1.DeleteArticlReply:
+            type: object
+            properties: {}
+            description: 删除文章响应体
+        api.content.v1.GetArticleReply:
+            type: object
+            properties:
+                article:
+                    $ref: '#/components/schemas/api.content.v1.Article'
+            description: 获得文章响应体
+        api.content.v1.UpdateArticleReply:
+            type: object
+            properties:
+                article:
+                    $ref: '#/components/schemas/api.content.v1.Article'
+            description: 更新文章响应体
+        api.content.v1.UpdateArticleRequest:
+            type: object
+            properties:
+                id:
+                    type: string
+                title:
+                    type: string
+                content:
+                    type: string
+                authorId:
+                    type: string
+            description: 更新文章请求体
+        api.user.v1.LoginReply:
+            type: object
+            properties:
+                token:
+                    type: string
+                userInfo:
+                    $ref: '#/components/schemas/api.user.v1.UserInfo'
+        api.user.v1.LoginRequest:
+            type: object
+            properties:
+                userName:
+                    type: string
+                password:
+                    type: string
+        api.user.v1.RegisterUserReply:
+            type: object
+            properties: {}
+        api.user.v1.RegisterUserRequest:
+            type: object
+            properties:
+                userName:
+                    type: string
+                password:
+                    type: string
+                email:
+                    type: string
+                rePassword:
+                    type: string
+            description: 用户注册请求结构体
+        api.user.v1.UserInfo:
+            type: object
+            properties:
+                id:
+                    type: string
+                userName:
+                    type: string
+                email:
+                    type: string
+            description: 用户信息结构体
 tags:
-    - name: Greeter
+    - name: Content
+      description: 定义 Content 服务
+    - name: Gateway
+      description: Gatway 服务,定义了所有对外暴露的HTTP接口
+    - name: User
+      description: 定义 User 服务

@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v3.20.1
-// source: content.proto
+// source: content/v1/content.proto
 
 package v1
 
@@ -20,6 +20,9 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	Content_CreateArticle_FullMethodName = "/api.content.v1.Content/CreateArticle"
+	Content_GetArticle_FullMethodName    = "/api.content.v1.Content/GetArticle"
+	Content_UpdateArticle_FullMethodName = "/api.content.v1.Content/UpdateArticle"
+	Content_DeleteArticle_FullMethodName = "/api.content.v1.Content/DeleteArticle"
 )
 
 // ContentClient is the client API for Content service.
@@ -29,6 +32,9 @@ const (
 // 定义 Content 服务
 type ContentClient interface {
 	CreateArticle(ctx context.Context, in *CreateArticleRequest, opts ...grpc.CallOption) (*CreateArticleReply, error)
+	GetArticle(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error)
+	UpdateArticle(ctx context.Context, in *UpdateArticleRequest, opts ...grpc.CallOption) (*UpdateArticleReply, error)
+	DeleteArticle(ctx context.Context, in *DeleteArticleRequest, opts ...grpc.CallOption) (*DeleteArticlReply, error)
 }
 
 type contentClient struct {
@@ -49,6 +55,36 @@ func (c *contentClient) CreateArticle(ctx context.Context, in *CreateArticleRequ
 	return out, nil
 }
 
+func (c *contentClient) GetArticle(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*GetArticleReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetArticleReply)
+	err := c.cc.Invoke(ctx, Content_GetArticle_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *contentClient) UpdateArticle(ctx context.Context, in *UpdateArticleRequest, opts ...grpc.CallOption) (*UpdateArticleReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateArticleReply)
+	err := c.cc.Invoke(ctx, Content_UpdateArticle_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *contentClient) DeleteArticle(ctx context.Context, in *DeleteArticleRequest, opts ...grpc.CallOption) (*DeleteArticlReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteArticlReply)
+	err := c.cc.Invoke(ctx, Content_DeleteArticle_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ContentServer is the server API for Content service.
 // All implementations must embed UnimplementedContentServer
 // for forward compatibility.
@@ -56,6 +92,9 @@ func (c *contentClient) CreateArticle(ctx context.Context, in *CreateArticleRequ
 // 定义 Content 服务
 type ContentServer interface {
 	CreateArticle(context.Context, *CreateArticleRequest) (*CreateArticleReply, error)
+	GetArticle(context.Context, *GetArticleRequest) (*GetArticleReply, error)
+	UpdateArticle(context.Context, *UpdateArticleRequest) (*UpdateArticleReply, error)
+	DeleteArticle(context.Context, *DeleteArticleRequest) (*DeleteArticlReply, error)
 	mustEmbedUnimplementedContentServer()
 }
 
@@ -68,6 +107,15 @@ type UnimplementedContentServer struct{}
 
 func (UnimplementedContentServer) CreateArticle(context.Context, *CreateArticleRequest) (*CreateArticleReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateArticle not implemented")
+}
+func (UnimplementedContentServer) GetArticle(context.Context, *GetArticleRequest) (*GetArticleReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetArticle not implemented")
+}
+func (UnimplementedContentServer) UpdateArticle(context.Context, *UpdateArticleRequest) (*UpdateArticleReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateArticle not implemented")
+}
+func (UnimplementedContentServer) DeleteArticle(context.Context, *DeleteArticleRequest) (*DeleteArticlReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteArticle not implemented")
 }
 func (UnimplementedContentServer) mustEmbedUnimplementedContentServer() {}
 func (UnimplementedContentServer) testEmbeddedByValue()                 {}
@@ -108,6 +156,60 @@ func _Content_CreateArticle_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Content_GetArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetArticleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContentServer).GetArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Content_GetArticle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContentServer).GetArticle(ctx, req.(*GetArticleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Content_UpdateArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateArticleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContentServer).UpdateArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Content_UpdateArticle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContentServer).UpdateArticle(ctx, req.(*UpdateArticleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Content_DeleteArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteArticleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContentServer).DeleteArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Content_DeleteArticle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContentServer).DeleteArticle(ctx, req.(*DeleteArticleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Content_ServiceDesc is the grpc.ServiceDesc for Content service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -119,7 +221,19 @@ var Content_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "CreateArticle",
 			Handler:    _Content_CreateArticle_Handler,
 		},
+		{
+			MethodName: "GetArticle",
+			Handler:    _Content_GetArticle_Handler,
+		},
+		{
+			MethodName: "UpdateArticle",
+			Handler:    _Content_UpdateArticle_Handler,
+		},
+		{
+			MethodName: "DeleteArticle",
+			Handler:    _Content_DeleteArticle_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "content.proto",
+	Metadata: "content/v1/content.proto",
 }

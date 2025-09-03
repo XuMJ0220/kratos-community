@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-http v2.8.4
 // - protoc             v3.20.1
-// source: content.proto
+// source: content/v1/content.proto
 
 package v1
 
@@ -20,14 +20,23 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationContentCreateArticle = "/api.content.v1.Content/CreateArticle"
+const OperationContentDeleteArticle = "/api.content.v1.Content/DeleteArticle"
+const OperationContentGetArticle = "/api.content.v1.Content/GetArticle"
+const OperationContentUpdateArticle = "/api.content.v1.Content/UpdateArticle"
 
 type ContentHTTPServer interface {
 	CreateArticle(context.Context, *CreateArticleRequest) (*CreateArticleReply, error)
+	DeleteArticle(context.Context, *DeleteArticleRequest) (*DeleteArticlReply, error)
+	GetArticle(context.Context, *GetArticleRequest) (*GetArticleReply, error)
+	UpdateArticle(context.Context, *UpdateArticleRequest) (*UpdateArticleReply, error)
 }
 
 func RegisterContentHTTPServer(s *http.Server, srv ContentHTTPServer) {
 	r := s.Route("/")
 	r.POST("/v1/articles", _Content_CreateArticle0_HTTP_Handler(srv))
+	r.GET("v1/articles/{id}", _Content_GetArticle0_HTTP_Handler(srv))
+	r.PUT("v1/articles/{id}", _Content_UpdateArticle0_HTTP_Handler(srv))
+	r.DELETE("v1/articles/{id}", _Content_DeleteArticle0_HTTP_Handler(srv))
 }
 
 func _Content_CreateArticle0_HTTP_Handler(srv ContentHTTPServer) func(ctx http.Context) error {
@@ -52,8 +61,80 @@ func _Content_CreateArticle0_HTTP_Handler(srv ContentHTTPServer) func(ctx http.C
 	}
 }
 
+func _Content_GetArticle0_HTTP_Handler(srv ContentHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetArticleRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationContentGetArticle)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetArticle(ctx, req.(*GetArticleRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetArticleReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Content_UpdateArticle0_HTTP_Handler(srv ContentHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdateArticleRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationContentUpdateArticle)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdateArticle(ctx, req.(*UpdateArticleRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UpdateArticleReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Content_DeleteArticle0_HTTP_Handler(srv ContentHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in DeleteArticleRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationContentDeleteArticle)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.DeleteArticle(ctx, req.(*DeleteArticleRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*DeleteArticlReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type ContentHTTPClient interface {
 	CreateArticle(ctx context.Context, req *CreateArticleRequest, opts ...http.CallOption) (rsp *CreateArticleReply, err error)
+	DeleteArticle(ctx context.Context, req *DeleteArticleRequest, opts ...http.CallOption) (rsp *DeleteArticlReply, err error)
+	GetArticle(ctx context.Context, req *GetArticleRequest, opts ...http.CallOption) (rsp *GetArticleReply, err error)
+	UpdateArticle(ctx context.Context, req *UpdateArticleRequest, opts ...http.CallOption) (rsp *UpdateArticleReply, err error)
 }
 
 type ContentHTTPClientImpl struct {
@@ -71,6 +152,45 @@ func (c *ContentHTTPClientImpl) CreateArticle(ctx context.Context, in *CreateArt
 	opts = append(opts, http.Operation(OperationContentCreateArticle))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *ContentHTTPClientImpl) DeleteArticle(ctx context.Context, in *DeleteArticleRequest, opts ...http.CallOption) (*DeleteArticlReply, error) {
+	var out DeleteArticlReply
+	pattern := "v1/articles/{id}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationContentDeleteArticle))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *ContentHTTPClientImpl) GetArticle(ctx context.Context, in *GetArticleRequest, opts ...http.CallOption) (*GetArticleReply, error) {
+	var out GetArticleReply
+	pattern := "v1/articles/{id}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationContentGetArticle))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *ContentHTTPClientImpl) UpdateArticle(ctx context.Context, in *UpdateArticleRequest, opts ...http.CallOption) (*UpdateArticleReply, error) {
+	var out UpdateArticleReply
+	pattern := "v1/articles/{id}"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationContentUpdateArticle))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

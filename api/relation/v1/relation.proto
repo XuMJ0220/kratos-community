@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+// 1. 定义 Protobuf 包名
+package api.relation.v1;
+
+// 2. 定义 Go 包名和路径
+option go_package = "kratos-community/api/relation/v1;v1";
+
+// 我们暂时不需要定义任何服务，但文件必须有这些基础信息

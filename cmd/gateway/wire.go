@@ -7,9 +7,8 @@ package main
 
 import (
 	"kratos-community/internal/conf"
-	"kratos-community/internal/content/biz"
-	"kratos-community/internal/content/data"
-	"kratos-community/internal/content/service"
+	"kratos-community/internal/gateway/client"
+	"kratos-community/internal/gateway/service"
 	"kratos-community/internal/registry"
 	"kratos-community/internal/server"
 
@@ -19,6 +18,6 @@ import (
 )
 
 // wireApp init kratos application.
-func wireApp(*conf.Server, *conf.Data, *conf.Auth, *conf.Registry, log.Logger) (*kratos.App, func(), error) {
-	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, registry.ProviderSet, newApp))
+func wireApp(*conf.Server, *conf.Registry, *conf.Auth,log.Logger) (*kratos.App, func(), error) {
+	panic(wire.Build(server.ProviderSet,service.ProviderSet, client.ProviderSet, registry.ProviderSet, newApp))
 }

@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package api.gateway.v1;
+
+option go_package = "kratos-community/api/gateway/v1;v1";
+
+
+// 导入 user 和 content 服务的 API 定义，因为我们需要复用它们的请求和响应体
+import "user/v1/user.proto";
+import "content/v1/content.proto";
+
+import "google/api/annotations.proto";
+
+// Gatway 服务,定义了所有对外暴露的HTTP接口 
+service Gateway{
+    // 转发到 User 服务的 Login 接口
+    rpc Login(api.user.v1.LoginRequest) returns(api.user.v1.LoginReply){
+        option (google.api.http) = {
+            post: "/v1/auth/login",
+            body: "*"
+        };
+    }
+
+    // 转发到 User 服务的 Register 接口
+    rpc RegisterUser(api.user.v1.RegisterUserRequest) returns(api.user.v1.RegisterUserReply){
+        option (google.api.http) = {
+            post: "/v1/auth/register",
+            body: "*"
+        };
+    }
+
+    // 转发到 Content 服务的 CreateArticle 接口
+    rpc CreateArticle(api.content.v1.CreateArticleRequest) returns (api.content.v1.CreateArticleReply) {
+        option (google.api.http) = {
+            post: "/v1/articles",
+            body: "*"
+        };
+    }
+
+    // 转发到 Content 服务的 CreateArticle 接口
+    rpc GetArticle(api.content.v1.GetArticleRequest)returns (api.content.v1.GetArticleReply){
+        // 这里只要id和GetArticleRequest中的id名字一样，就能自动对应上，而且类型可以自动转换
+        option (google.api.http) = {
+            get:"v1/articles/{id}" 
+        };
+    }
+
+    // 转发到 Content 服务的 UpdateArticle 接口
+    rpc UpdateArticle(api.content.v1.UpdateArticleRequest)returns (api.content.v1.UpdateArticleReply){
+        option (google.api.http) = {
+            put:"v1/articles/{id}",
+            body:"*"
+        };
+    }
+    
+    // 转发到 Content 服务的 DeleteArticle 接口
+    rpc DeleteArticle(api.content.v1.DeleteArticleRequest)returns (api.content.v1.DeleteArticlReply){
+        option (google.api.http) = {
+            delete:"v1/articles/{id}",
+        };
+    }
+}

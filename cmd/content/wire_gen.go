@@ -13,6 +13,7 @@ import (
 	"kratos-community/internal/content/biz"
 	"kratos-community/internal/content/data"
 	"kratos-community/internal/content/service"
+	"kratos-community/internal/registry"
 	"kratos-community/internal/server"
 )
 
@@ -23,17 +24,26 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, logger log.Logger) (*kratos.App, func(), error) {
+func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, confRegistry *conf.Registry, logger log.Logger) (*kratos.App, func(), error) {
 	grpcServer := server.NewGRPCServer(confServer, auth, logger)
 	httpServer := server.NewHTTPServer(confServer, auth, logger)
-	dataData, cleanup, err := data.NewData(confData, logger)
+	db, err := data.NewDB(confData, logger)
+	if err != nil {
+		return nil, nil, err
+	}
+	client, err := data.NewRedisClient(confData, logger)
+	if err != nil {
+		return nil, nil, err
+	}
+	dataData, cleanup, err := data.NewData(db, client, logger)
 	if err != nil {
 		return nil, nil, err
 	}
 	contentRepo := data.NewContentRepo(dataData, logger)
 	contentUsecase := biz.NewContentUsecase(contentRepo, logger, auth)
 	contentService := service.NewContentService(contentUsecase)
-	app := newApp(logger, grpcServer, httpServer, contentService)
+	registrar := registry.NewRegistry(confRegistry)
+	app := newApp(logger, grpcServer, httpServer, contentService, registrar)
 	return app, func() {
 		cleanup()
 	}, nil

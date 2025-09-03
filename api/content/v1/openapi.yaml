@@ -31,6 +31,86 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
+    v1/articles/{id}:
+        get:
+            tags:
+                - Content
+            operationId: Content_GetArticle
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetArticleReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        put:
+            tags:
+                - Content
+            operationId: Content_UpdateArticle
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateArticleRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UpdateArticleReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        delete:
+            tags:
+                - Content
+            operationId: Content_DeleteArticle
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: authorId
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DeleteArticlReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
 components:
     schemas:
         Article:
@@ -63,7 +143,19 @@ components:
                     type: string
                 content:
                     type: string
+                authorId:
+                    type: string
             description: 创建文章请求体
+        DeleteArticlReply:
+            type: object
+            properties: {}
+            description: 删除文章响应体
+        GetArticleReply:
+            type: object
+            properties:
+                article:
+                    $ref: '#/components/schemas/Article'
+            description: 获得文章响应体
         GoogleProtobufAny:
             type: object
             properties:
@@ -88,5 +180,23 @@ components:
                         $ref: '#/components/schemas/GoogleProtobufAny'
                     description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
             description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
+        UpdateArticleReply:
+            type: object
+            properties:
+                article:
+                    $ref: '#/components/schemas/Article'
+            description: 更新文章响应体
+        UpdateArticleRequest:
+            type: object
+            properties:
+                id:
+                    type: string
+                title:
+                    type: string
+                content:
+                    type: string
+                authorId:
+                    type: string
+            description: 更新文章请求体
 tags:
     - name: Content

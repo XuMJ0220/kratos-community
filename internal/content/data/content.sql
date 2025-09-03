@@ -1,4 +1,4 @@
--- Active: 1756188174936@@192.168.192.1@3310@kratos_community_content
+-- Active: 1756839736469@@192.168.192.1@3310@kratos_community_user
 CREATE TABLE `articles`(
     `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '文章ID',
     `author_id` BIGINT(20) UNSIGNED NOT NULL COMMENT '作者的用户ID',

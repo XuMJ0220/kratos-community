@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"kratos-community/internal/conf"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -22,18 +23,37 @@ func NewHTTPServer(c *conf.Server, auth *conf.Auth, logger log.Logger) *http.Ser
 	}
 
 	// 添加 jwt 中间件
+	// opts = append(opts, http.Middleware(
+	// 	selector.Server(
+	// 		// 创建 JWT 中间件
+	// 		jwt.Server(func(token *jwtv5.Token) (interface{}, error) {
+	// 			return []byte(auth.JwtSecret), nil
+	// 		}),
+	// 	).Path(
+	// 	//往这里添加，例如
+	// 	//"/api.user.v1.User/RegisterUser"
+	// 	//"/api.content.v1.Content/CreateArticle",
+	// 	//"/api.gateway.v1.Gateway/CreateArticle",
+	// 	).Build(),
+	// ))
 	opts = append(opts, http.Middleware(
+		// 使用 Matcher 方法来创建“黑名单”
 		selector.Server(
-			// 创建 JWT 中间件
 			jwt.Server(func(token *jwtv5.Token) (interface{}, error) {
 				return []byte(auth.JwtSecret), nil
 			}),
-		).Path(
-		//往这里添加，例如
-		//"/api.user.v1.User/RegisterUser"
-		"/api.content.v1.Content/CreateArticle",
-		).Build(),
+		).Match(func(ctx context.Context, operation string) bool {
+			// 如果是注册或登录接口，返回 false，意味着“不应用”JWT中间件
+			if operation == "/api.gateway.v1.Gateway/RegisterUser" ||
+				operation == "/api.gateway.v1.Gateway/Login" ||
+				operation == "/api.gateway.v1.Gateway/GetArticle" {
+				return false
+			}
+			// 其他所有接口，默认都返回 true，意味着“应用”JWT中间件
+			return true
+		}).Build(),
 	))
+
 	if c.Http.Network != "" {
 		opts = append(opts, http.Network(c.Http.Network))
 	}
