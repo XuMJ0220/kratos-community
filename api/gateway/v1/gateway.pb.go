@@ -11,6 +11,8 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	v11 "kratos-community/api/content/v1"
+	v12 "kratos-community/api/interaction/v1"
+	v13 "kratos-community/api/relation/v1"
 	v1 "kratos-community/api/user/v1"
 	reflect "reflect"
 	unsafe "unsafe"
@@ -27,7 +29,7 @@ var File_gateway_v1_gateway_proto protoreflect.FileDescriptor
 
 const file_gateway_v1_gateway_proto_rawDesc = "" +
 	"\n" +
-	"\x18gateway/v1/gateway.proto\x12\x0eapi.gateway.v1\x1a\x12user/v1/user.proto\x1a\x18content/v1/content.proto\x1a\x1cgoogle/api/annotations.proto2\x9d\x05\n" +
+	"\x18gateway/v1/gateway.proto\x12\x0eapi.gateway.v1\x1a\x12user/v1/user.proto\x1a\x18content/v1/content.proto\x1a interaction/v1/interaction.proto\x1a\x1arelation/v1/relation.proto\x1a\x1cgoogle/api/annotations.proto2\x8f\v\n" +
 	"\aGateway\x12V\n" +
 	"\x05Login\x12\x19.api.user.v1.LoginRequest\x1a\x17.api.user.v1.LoginReply\"\x19\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/v1/auth/login\x12n\n" +
 	"\fRegisterUser\x12 .api.user.v1.RegisterUserRequest\x1a\x1e.api.user.v1.RegisterUserReply\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/v1/auth/register\x12r\n" +
@@ -35,21 +37,40 @@ const file_gateway_v1_gateway_proto_rawDesc = "" +
 	"\n" +
 	"GetArticle\x12!.api.content.v1.GetArticleRequest\x1a\x1f.api.content.v1.GetArticleReply\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10v1/articles/{id}\x12v\n" +
 	"\rUpdateArticle\x12$.api.content.v1.UpdateArticleRequest\x1a\".api.content.v1.UpdateArticleReply\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\x1a\x10v1/articles/{id}\x12r\n" +
-	"\rDeleteArticle\x12$.api.content.v1.DeleteArticleRequest\x1a!.api.content.v1.DeleteArticlReply\"\x18\x82\xd3\xe4\x93\x02\x12*\x10v1/articles/{id}B$Z\"kratos-community/api/gateway/v1;v1b\x06proto3"
+	"\rDeleteArticle\x12$.api.content.v1.DeleteArticleRequest\x1a!.api.content.v1.DeleteArticlReply\"\x18\x82\xd3\xe4\x93\x02\x12*\x10v1/articles/{id}\x12z\n" +
+	"\vLikeArticle\x12&.api.interaction.v1.LikeArticleRequest\x1a$.api.interaction.v1.LikeArticleReply\"\x1d\x82\xd3\xe4\x93\x02\x17\"\x15/v1/article/{id}/like\x12\x82\x01\n" +
+	"\rUnlikeArticle\x12(.api.interaction.v1.UnlikeArticleRequest\x1a&.api.interaction.v1.UnlikeArticleReply\"\x1f\x82\xd3\xe4\x93\x02\x19*\x17/v1/article/{id}/unlike\x12q\n" +
+	"\n" +
+	"FollowUser\x12\".api.relation.v1.FollowUserRequest\x1a .api.relation.v1.FollowUserReply\"\x1d\x82\xd3\xe4\x93\x02\x17\"\x15/v1/users/{id}/follow\x12y\n" +
+	"\fUnfollowUser\x12$.api.relation.v1.UnfollowUserRequest\x1a\".api.relation.v1.UnfollowUserReply\"\x1f\x82\xd3\xe4\x93\x02\x19\"\x17/v1/users/{id}/unfollow\x12\x81\x01\n" +
+	"\x0eListFollowings\x12&.api.relation.v1.ListFollowingsRequest\x1a$.api.relation.v1.ListFollowingsReply\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/v1/users/{id}/followings\x12}\n" +
+	"\rListFollowers\x12%.api.relation.v1.ListFollowersRequest\x1a#.api.relation.v1.ListFollowersReply\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/v1/users/{id}/followersB$Z\"kratos-community/api/gateway/v1;v1b\x06proto3"
 
 var file_gateway_v1_gateway_proto_goTypes = []any{
-	(*v1.LoginRequest)(nil),          // 0: api.user.v1.LoginRequest
-	(*v1.RegisterUserRequest)(nil),   // 1: api.user.v1.RegisterUserRequest
-	(*v11.CreateArticleRequest)(nil), // 2: api.content.v1.CreateArticleRequest
-	(*v11.GetArticleRequest)(nil),    // 3: api.content.v1.GetArticleRequest
-	(*v11.UpdateArticleRequest)(nil), // 4: api.content.v1.UpdateArticleRequest
-	(*v11.DeleteArticleRequest)(nil), // 5: api.content.v1.DeleteArticleRequest
-	(*v1.LoginReply)(nil),            // 6: api.user.v1.LoginReply
-	(*v1.RegisterUserReply)(nil),     // 7: api.user.v1.RegisterUserReply
-	(*v11.CreateArticleReply)(nil),   // 8: api.content.v1.CreateArticleReply
-	(*v11.GetArticleReply)(nil),      // 9: api.content.v1.GetArticleReply
-	(*v11.UpdateArticleReply)(nil),   // 10: api.content.v1.UpdateArticleReply
-	(*v11.DeleteArticlReply)(nil),    // 11: api.content.v1.DeleteArticlReply
+	(*v1.LoginRequest)(nil),           // 0: api.user.v1.LoginRequest
+	(*v1.RegisterUserRequest)(nil),    // 1: api.user.v1.RegisterUserRequest
+	(*v11.CreateArticleRequest)(nil),  // 2: api.content.v1.CreateArticleRequest
+	(*v11.GetArticleRequest)(nil),     // 3: api.content.v1.GetArticleRequest
+	(*v11.UpdateArticleRequest)(nil),  // 4: api.content.v1.UpdateArticleRequest
+	(*v11.DeleteArticleRequest)(nil),  // 5: api.content.v1.DeleteArticleRequest
+	(*v12.LikeArticleRequest)(nil),    // 6: api.interaction.v1.LikeArticleRequest
+	(*v12.UnlikeArticleRequest)(nil),  // 7: api.interaction.v1.UnlikeArticleRequest
+	(*v13.FollowUserRequest)(nil),     // 8: api.relation.v1.FollowUserRequest
+	(*v13.UnfollowUserRequest)(nil),   // 9: api.relation.v1.UnfollowUserRequest
+	(*v13.ListFollowingsRequest)(nil), // 10: api.relation.v1.ListFollowingsRequest
+	(*v13.ListFollowersRequest)(nil),  // 11: api.relation.v1.ListFollowersRequest
+	(*v1.LoginReply)(nil),             // 12: api.user.v1.LoginReply
+	(*v1.RegisterUserReply)(nil),      // 13: api.user.v1.RegisterUserReply
+	(*v11.CreateArticleReply)(nil),    // 14: api.content.v1.CreateArticleReply
+	(*v11.GetArticleReply)(nil),       // 15: api.content.v1.GetArticleReply
+	(*v11.UpdateArticleReply)(nil),    // 16: api.content.v1.UpdateArticleReply
+	(*v11.DeleteArticlReply)(nil),     // 17: api.content.v1.DeleteArticlReply
+	(*v12.LikeArticleReply)(nil),      // 18: api.interaction.v1.LikeArticleReply
+	(*v12.UnlikeArticleReply)(nil),    // 19: api.interaction.v1.UnlikeArticleReply
+	(*v13.FollowUserReply)(nil),       // 20: api.relation.v1.FollowUserReply
+	(*v13.UnfollowUserReply)(nil),     // 21: api.relation.v1.UnfollowUserReply
+	(*v13.ListFollowingsReply)(nil),   // 22: api.relation.v1.ListFollowingsReply
+	(*v13.ListFollowersReply)(nil),    // 23: api.relation.v1.ListFollowersReply
 }
 var file_gateway_v1_gateway_proto_depIdxs = []int32{
 	0,  // 0: api.gateway.v1.Gateway.Login:input_type -> api.user.v1.LoginRequest
@@ -58,14 +79,26 @@ var file_gateway_v1_gateway_proto_depIdxs = []int32{
 	3,  // 3: api.gateway.v1.Gateway.GetArticle:input_type -> api.content.v1.GetArticleRequest
 	4,  // 4: api.gateway.v1.Gateway.UpdateArticle:input_type -> api.content.v1.UpdateArticleRequest
 	5,  // 5: api.gateway.v1.Gateway.DeleteArticle:input_type -> api.content.v1.DeleteArticleRequest
-	6,  // 6: api.gateway.v1.Gateway.Login:output_type -> api.user.v1.LoginReply
-	7,  // 7: api.gateway.v1.Gateway.RegisterUser:output_type -> api.user.v1.RegisterUserReply
-	8,  // 8: api.gateway.v1.Gateway.CreateArticle:output_type -> api.content.v1.CreateArticleReply
-	9,  // 9: api.gateway.v1.Gateway.GetArticle:output_type -> api.content.v1.GetArticleReply
-	10, // 10: api.gateway.v1.Gateway.UpdateArticle:output_type -> api.content.v1.UpdateArticleReply
-	11, // 11: api.gateway.v1.Gateway.DeleteArticle:output_type -> api.content.v1.DeleteArticlReply
-	6,  // [6:12] is the sub-list for method output_type
-	0,  // [0:6] is the sub-list for method input_type
+	6,  // 6: api.gateway.v1.Gateway.LikeArticle:input_type -> api.interaction.v1.LikeArticleRequest
+	7,  // 7: api.gateway.v1.Gateway.UnlikeArticle:input_type -> api.interaction.v1.UnlikeArticleRequest
+	8,  // 8: api.gateway.v1.Gateway.FollowUser:input_type -> api.relation.v1.FollowUserRequest
+	9,  // 9: api.gateway.v1.Gateway.UnfollowUser:input_type -> api.relation.v1.UnfollowUserRequest
+	10, // 10: api.gateway.v1.Gateway.ListFollowings:input_type -> api.relation.v1.ListFollowingsRequest
+	11, // 11: api.gateway.v1.Gateway.ListFollowers:input_type -> api.relation.v1.ListFollowersRequest
+	12, // 12: api.gateway.v1.Gateway.Login:output_type -> api.user.v1.LoginReply
+	13, // 13: api.gateway.v1.Gateway.RegisterUser:output_type -> api.user.v1.RegisterUserReply
+	14, // 14: api.gateway.v1.Gateway.CreateArticle:output_type -> api.content.v1.CreateArticleReply
+	15, // 15: api.gateway.v1.Gateway.GetArticle:output_type -> api.content.v1.GetArticleReply
+	16, // 16: api.gateway.v1.Gateway.UpdateArticle:output_type -> api.content.v1.UpdateArticleReply
+	17, // 17: api.gateway.v1.Gateway.DeleteArticle:output_type -> api.content.v1.DeleteArticlReply
+	18, // 18: api.gateway.v1.Gateway.LikeArticle:output_type -> api.interaction.v1.LikeArticleReply
+	19, // 19: api.gateway.v1.Gateway.UnlikeArticle:output_type -> api.interaction.v1.UnlikeArticleReply
+	20, // 20: api.gateway.v1.Gateway.FollowUser:output_type -> api.relation.v1.FollowUserReply
+	21, // 21: api.gateway.v1.Gateway.UnfollowUser:output_type -> api.relation.v1.UnfollowUserReply
+	22, // 22: api.gateway.v1.Gateway.ListFollowings:output_type -> api.relation.v1.ListFollowingsReply
+	23, // 23: api.gateway.v1.Gateway.ListFollowers:output_type -> api.relation.v1.ListFollowersReply
+	12, // [12:24] is the sub-list for method output_type
+	0,  // [0:12] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

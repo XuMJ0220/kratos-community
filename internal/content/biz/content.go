@@ -42,8 +42,8 @@ type Article struct {
 	UpdatedAt *timestamppb.Timestamp
 }
 
-func NewContentUsecase(repo ContentRepo, logger log.Logger, jwtSecret *conf.Auth) *ContentUsecase {
-	return &ContentUsecase{repo: repo, log: log.NewHelper(logger), jwtSecret: jwtSecret.JwtSecret}
+func NewContentUsecase(repo ContentRepo, logger log.Logger, jwtScret *conf.Auth) *ContentUsecase {
+	return &ContentUsecase{repo: repo, log: log.NewHelper(logger), jwtSecret: jwtScret.JwtSecret}
 }
 
 func (uc *ContentUsecase) CreArticle(ctx context.Context, authorID uint64, title, content string) (*Article, error) {

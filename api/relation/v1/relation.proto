@@ -6,4 +6,76 @@ package api.relation.v1;
 // 2. 定义 Go 包名和路径
 option go_package = "kratos-community/api/relation/v1;v1";
 
-// 我们暂时不需要定义任何服务，但文件必须有这些基础信息
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+
+import "user/v1/user.proto";
+
+service Relation{
+    // 关注
+    rpc FollowUser(FollowUserRequest) returns (FollowUserReply){
+        option (google.api.http) = {
+            post: "/v1/users/{id}/follow",
+        };
+    }
+    // 取关
+    rpc UnfollowUser(UnfollowUserRequest) returns(UnfollowUserReply){
+        option (google.api.http) = {
+            post: "/v1/users/{id}/unfollow",
+        };
+    }
+    // 获取关注列表
+    rpc ListFollowings(ListFollowingsRequest) returns(ListFollowingsReply){
+        option (google.api.http) = {
+            get: "/v1/users/{id}/followings",
+        };
+    }
+    // 获取粉丝列表
+    rpc ListFollowers(ListFollowersRequest) returns(ListFollowersReply){
+        option (google.api.http) = {
+            get: "/v1/users/{id}/followers",
+        };
+    }
+}
+
+message FollowUserRequest{
+    uint64 id = 1 [(validate.rules).uint64.gt = 0]; // 被关注者的ID
+    uint64 user_id = 2; // 关注者的ID
+}
+
+message FollowUserReply{
+
+}
+
+message UnfollowUserRequest{
+    uint64 id = 1 [(validate.rules).uint64.gt = 0]; // 被取消关注的ID
+    uint64 user_id = 2; // 取消关注的用户ID
+}
+
+message UnfollowUserReply{
+    
+}
+
+message ListFollowingsRequest{
+    uint64 id = 1 [(validate.rules).uint64.gt = 0]; // 需要查找关注列表的用户ID
+    uint64 user_id = 2;
+    uint64 page = 3;
+    uint64 page_size = 4;
+}
+
+message ListFollowingsReply{
+    repeated api.user.v1.UserInfo users = 1;// 关注列表
+    uint64 total = 2;
+}
+
+message ListFollowersRequest{ 
+    uint64 id = 1 [(validate.rules).uint64.gt = 0]; // 需要查找粉丝列表的用户ID
+    uint64 user_id = 2;
+    uint64 page = 3;
+    uint64 page_size = 4;
+}
+
+message ListFollowersReply{
+    repeated api.user.v1.UserInfo users = 1;// 粉丝列表
+    uint64 total = 2;
+}

@@ -57,6 +57,31 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
+    /v1/users/list:
+        post:
+            tags:
+                - User
+            description: 根据ID列表批量获取用户信息
+            operationId: User_ListUsers
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ListUsersRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListUsersReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
 components:
     schemas:
         GoogleProtobufAny:
@@ -67,6 +92,20 @@ components:
                     description: The type of the serialized message.
             additionalProperties: true
             description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+        ListUsersReply:
+            type: object
+            properties:
+                users:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/UserInfo'
+        ListUsersRequest:
+            type: object
+            properties:
+                ids:
+                    type: array
+                    items:
+                        type: string
         LoginReply:
             type: object
             properties:

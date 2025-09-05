@@ -5,6 +5,8 @@ import (
 
 	contentv1 "kratos-community/api/content/v1"
 	pb "kratos-community/api/gateway/v1"
+	interactionv1 "kratos-community/api/interaction/v1"
+	relationv1 "kratos-community/api/relation/v1"
 	userv1 "kratos-community/api/user/v1"
 
 	"github.com/go-kratos/kratos/v2/errors"
@@ -20,12 +22,21 @@ var (
 
 type GatewayService struct {
 	pb.UnimplementedGatewayServer
-	userClient    userv1.UserClient
-	contentClient contentv1.ContentClient
+	userClient        userv1.UserClient
+	contentClient     contentv1.ContentClient
+	interactionClient interactionv1.InteractionClient
+	relationClient    relationv1.RelationClient
 }
 
-func NewGatewayService(userClient userv1.UserClient, contentClient contentv1.ContentClient) *GatewayService {
-	return &GatewayService{userClient: userClient, contentClient: contentClient}
+func NewGatewayService(userClient userv1.UserClient,
+	contentClient contentv1.ContentClient,
+	interactionClient interactionv1.InteractionClient,
+	relationClient relationv1.RelationClient) *GatewayService {
+	return &GatewayService{userClient: userClient,
+		contentClient:     contentClient,
+		interactionClient: interactionClient,
+		relationClient:    relationClient,
+	}
 }
 
 func (s *GatewayService) Login(ctx context.Context, req *userv1.LoginRequest) (*userv1.LoginReply, error) {
@@ -84,6 +95,42 @@ func (s *GatewayService) DeleteArticle(ctx context.Context, req *contentv1.Delet
 	}
 	req.AuthorId = authorId
 	return s.contentClient.DeleteArticle(ctx, req)
+}
+
+func (s *GatewayService) LikeArticle(ctx context.Context, req *interactionv1.LikeArticleRequest) (*interactionv1.LikeArticleReply, error) {
+	authorId, err := getUserId(ctx)
+	if err != nil {
+		return nil, err
+	}
+	req.UserId = authorId
+	return s.interactionClient.LikeArticle(ctx, req)
+}
+
+func (s *GatewayService) UnlikeArticle(ctx context.Context, req *interactionv1.UnlikeArticleRequest) (*interactionv1.UnlikeArticleReply, error) {
+	authorId, err := getUserId(ctx)
+	if err != nil {
+		return nil, err
+	}
+	req.UserId = authorId
+	return s.interactionClient.UnlikeArticle(ctx, req)
+}
+
+func (s *GatewayService) FollowUser(ctx context.Context, req *relationv1.FollowUserRequest) (*relationv1.FollowUserReply, error) {
+	followId, err := getUserId(ctx)
+	if err != nil {
+		return nil, err
+	}
+	req.UserId = followId
+	return s.relationClient.FollowUser(ctx, req)
+}
+
+func (s *GatewayService) UnfollowUser(ctx context.Context, req *relationv1.UnfollowUserRequest) (*relationv1.UnfollowUserReply, error) {
+	followId, err := getUserId(ctx)
+	if err != nil {
+		return nil, err
+	}
+	req.UserId = followId
+	return s.relationClient.UnfollowUser(ctx, req)
 }
 
 // getUserId 获取从Token中携带的id

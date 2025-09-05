@@ -11,6 +11,8 @@ import (
 	http "github.com/go-kratos/kratos/v2/transport/http"
 	binding "github.com/go-kratos/kratos/v2/transport/http/binding"
 	v11 "kratos-community/api/content/v1"
+	v12 "kratos-community/api/interaction/v1"
+	v13 "kratos-community/api/relation/v1"
 	v1 "kratos-community/api/user/v1"
 )
 
@@ -23,9 +25,15 @@ const _ = http.SupportPackageIsVersion1
 
 const OperationGatewayCreateArticle = "/api.gateway.v1.Gateway/CreateArticle"
 const OperationGatewayDeleteArticle = "/api.gateway.v1.Gateway/DeleteArticle"
+const OperationGatewayFollowUser = "/api.gateway.v1.Gateway/FollowUser"
 const OperationGatewayGetArticle = "/api.gateway.v1.Gateway/GetArticle"
+const OperationGatewayLikeArticle = "/api.gateway.v1.Gateway/LikeArticle"
+const OperationGatewayListFollowers = "/api.gateway.v1.Gateway/ListFollowers"
+const OperationGatewayListFollowings = "/api.gateway.v1.Gateway/ListFollowings"
 const OperationGatewayLogin = "/api.gateway.v1.Gateway/Login"
 const OperationGatewayRegisterUser = "/api.gateway.v1.Gateway/RegisterUser"
+const OperationGatewayUnfollowUser = "/api.gateway.v1.Gateway/UnfollowUser"
+const OperationGatewayUnlikeArticle = "/api.gateway.v1.Gateway/UnlikeArticle"
 const OperationGatewayUpdateArticle = "/api.gateway.v1.Gateway/UpdateArticle"
 
 type GatewayHTTPServer interface {
@@ -33,12 +41,24 @@ type GatewayHTTPServer interface {
 	CreateArticle(context.Context, *v11.CreateArticleRequest) (*v11.CreateArticleReply, error)
 	// DeleteArticle 转发到 Content 服务的 DeleteArticle 接口
 	DeleteArticle(context.Context, *v11.DeleteArticleRequest) (*v11.DeleteArticlReply, error)
+	// FollowUser 转发到 Relation 服务的 FollowUser 接口
+	FollowUser(context.Context, *v13.FollowUserRequest) (*v13.FollowUserReply, error)
 	// GetArticle 转发到 Content 服务的 CreateArticle 接口
 	GetArticle(context.Context, *v11.GetArticleRequest) (*v11.GetArticleReply, error)
+	// LikeArticle 转发到 Interaction 服务的 LikeArticle 接口
+	LikeArticle(context.Context, *v12.LikeArticleRequest) (*v12.LikeArticleReply, error)
+	// ListFollowers 转发到 Relation 服务的 ListFollowers 接口
+	ListFollowers(context.Context, *v13.ListFollowersRequest) (*v13.ListFollowersReply, error)
+	// ListFollowings 转发到 Relation 服务的 ListFollowings 接口
+	ListFollowings(context.Context, *v13.ListFollowingsRequest) (*v13.ListFollowingsReply, error)
 	// Login 转发到 User 服务的 Login 接口
 	Login(context.Context, *v1.LoginRequest) (*v1.LoginReply, error)
 	// RegisterUser 转发到 User 服务的 Register 接口
 	RegisterUser(context.Context, *v1.RegisterUserRequest) (*v1.RegisterUserReply, error)
+	// UnfollowUser 转发到 Relation 服务的 UnfollowUser 接口
+	UnfollowUser(context.Context, *v13.UnfollowUserRequest) (*v13.UnfollowUserReply, error)
+	// UnlikeArticle 转发到 Interaction 服务的 UnlikeArticle 接口
+	UnlikeArticle(context.Context, *v12.UnlikeArticleRequest) (*v12.UnlikeArticleReply, error)
 	// UpdateArticle 转发到 Content 服务的 UpdateArticle 接口
 	UpdateArticle(context.Context, *v11.UpdateArticleRequest) (*v11.UpdateArticleReply, error)
 }
@@ -51,6 +71,12 @@ func RegisterGatewayHTTPServer(s *http.Server, srv GatewayHTTPServer) {
 	r.GET("v1/articles/{id}", _Gateway_GetArticle1_HTTP_Handler(srv))
 	r.PUT("v1/articles/{id}", _Gateway_UpdateArticle1_HTTP_Handler(srv))
 	r.DELETE("v1/articles/{id}", _Gateway_DeleteArticle1_HTTP_Handler(srv))
+	r.POST("/v1/article/{id}/like", _Gateway_LikeArticle1_HTTP_Handler(srv))
+	r.DELETE("/v1/article/{id}/unlike", _Gateway_UnlikeArticle1_HTTP_Handler(srv))
+	r.POST("/v1/users/{id}/follow", _Gateway_FollowUser1_HTTP_Handler(srv))
+	r.POST("/v1/users/{id}/unfollow", _Gateway_UnfollowUser1_HTTP_Handler(srv))
+	r.GET("/v1/users/{id}/followings", _Gateway_ListFollowings1_HTTP_Handler(srv))
+	r.GET("/v1/users/{id}/followers", _Gateway_ListFollowers1_HTTP_Handler(srv))
 }
 
 func _Gateway_Login1_HTTP_Handler(srv GatewayHTTPServer) func(ctx http.Context) error {
@@ -188,12 +214,150 @@ func _Gateway_DeleteArticle1_HTTP_Handler(srv GatewayHTTPServer) func(ctx http.C
 	}
 }
 
+func _Gateway_LikeArticle1_HTTP_Handler(srv GatewayHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v12.LikeArticleRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationGatewayLikeArticle)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.LikeArticle(ctx, req.(*v12.LikeArticleRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v12.LikeArticleReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Gateway_UnlikeArticle1_HTTP_Handler(srv GatewayHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v12.UnlikeArticleRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationGatewayUnlikeArticle)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UnlikeArticle(ctx, req.(*v12.UnlikeArticleRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v12.UnlikeArticleReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Gateway_FollowUser1_HTTP_Handler(srv GatewayHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v13.FollowUserRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationGatewayFollowUser)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.FollowUser(ctx, req.(*v13.FollowUserRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v13.FollowUserReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Gateway_UnfollowUser1_HTTP_Handler(srv GatewayHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v13.UnfollowUserRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationGatewayUnfollowUser)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UnfollowUser(ctx, req.(*v13.UnfollowUserRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v13.UnfollowUserReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Gateway_ListFollowings1_HTTP_Handler(srv GatewayHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v13.ListFollowingsRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationGatewayListFollowings)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListFollowings(ctx, req.(*v13.ListFollowingsRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v13.ListFollowingsReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Gateway_ListFollowers1_HTTP_Handler(srv GatewayHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v13.ListFollowersRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationGatewayListFollowers)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListFollowers(ctx, req.(*v13.ListFollowersRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v13.ListFollowersReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type GatewayHTTPClient interface {
 	CreateArticle(ctx context.Context, req *v11.CreateArticleRequest, opts ...http.CallOption) (rsp *v11.CreateArticleReply, err error)
 	DeleteArticle(ctx context.Context, req *v11.DeleteArticleRequest, opts ...http.CallOption) (rsp *v11.DeleteArticlReply, err error)
+	FollowUser(ctx context.Context, req *v13.FollowUserRequest, opts ...http.CallOption) (rsp *v13.FollowUserReply, err error)
 	GetArticle(ctx context.Context, req *v11.GetArticleRequest, opts ...http.CallOption) (rsp *v11.GetArticleReply, err error)
+	LikeArticle(ctx context.Context, req *v12.LikeArticleRequest, opts ...http.CallOption) (rsp *v12.LikeArticleReply, err error)
+	ListFollowers(ctx context.Context, req *v13.ListFollowersRequest, opts ...http.CallOption) (rsp *v13.ListFollowersReply, err error)
+	ListFollowings(ctx context.Context, req *v13.ListFollowingsRequest, opts ...http.CallOption) (rsp *v13.ListFollowingsReply, err error)
 	Login(ctx context.Context, req *v1.LoginRequest, opts ...http.CallOption) (rsp *v1.LoginReply, err error)
 	RegisterUser(ctx context.Context, req *v1.RegisterUserRequest, opts ...http.CallOption) (rsp *v1.RegisterUserReply, err error)
+	UnfollowUser(ctx context.Context, req *v13.UnfollowUserRequest, opts ...http.CallOption) (rsp *v13.UnfollowUserReply, err error)
+	UnlikeArticle(ctx context.Context, req *v12.UnlikeArticleRequest, opts ...http.CallOption) (rsp *v12.UnlikeArticleReply, err error)
 	UpdateArticle(ctx context.Context, req *v11.UpdateArticleRequest, opts ...http.CallOption) (rsp *v11.UpdateArticleReply, err error)
 }
 
@@ -231,11 +395,63 @@ func (c *GatewayHTTPClientImpl) DeleteArticle(ctx context.Context, in *v11.Delet
 	return &out, nil
 }
 
+func (c *GatewayHTTPClientImpl) FollowUser(ctx context.Context, in *v13.FollowUserRequest, opts ...http.CallOption) (*v13.FollowUserReply, error) {
+	var out v13.FollowUserReply
+	pattern := "/v1/users/{id}/follow"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationGatewayFollowUser))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 func (c *GatewayHTTPClientImpl) GetArticle(ctx context.Context, in *v11.GetArticleRequest, opts ...http.CallOption) (*v11.GetArticleReply, error) {
 	var out v11.GetArticleReply
 	pattern := "v1/articles/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationGatewayGetArticle))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *GatewayHTTPClientImpl) LikeArticle(ctx context.Context, in *v12.LikeArticleRequest, opts ...http.CallOption) (*v12.LikeArticleReply, error) {
+	var out v12.LikeArticleReply
+	pattern := "/v1/article/{id}/like"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationGatewayLikeArticle))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *GatewayHTTPClientImpl) ListFollowers(ctx context.Context, in *v13.ListFollowersRequest, opts ...http.CallOption) (*v13.ListFollowersReply, error) {
+	var out v13.ListFollowersReply
+	pattern := "/v1/users/{id}/followers"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationGatewayListFollowers))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *GatewayHTTPClientImpl) ListFollowings(ctx context.Context, in *v13.ListFollowingsRequest, opts ...http.CallOption) (*v13.ListFollowingsReply, error) {
+	var out v13.ListFollowingsReply
+	pattern := "/v1/users/{id}/followings"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationGatewayListFollowings))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -264,6 +480,32 @@ func (c *GatewayHTTPClientImpl) RegisterUser(ctx context.Context, in *v1.Registe
 	opts = append(opts, http.Operation(OperationGatewayRegisterUser))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *GatewayHTTPClientImpl) UnfollowUser(ctx context.Context, in *v13.UnfollowUserRequest, opts ...http.CallOption) (*v13.UnfollowUserReply, error) {
+	var out v13.UnfollowUserReply
+	pattern := "/v1/users/{id}/unfollow"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationGatewayUnfollowUser))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *GatewayHTTPClientImpl) UnlikeArticle(ctx context.Context, in *v12.UnlikeArticleRequest, opts ...http.CallOption) (*v12.UnlikeArticleReply, error) {
+	var out v12.UnlikeArticleReply
+	pattern := "/v1/article/{id}/unlike"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationGatewayUnlikeArticle))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

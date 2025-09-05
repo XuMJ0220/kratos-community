@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-http v2.8.4
 // - protoc             v3.20.1
-// source: user/v1/user.proto
+// source: user.proto
 
 package v1
 
@@ -19,10 +19,13 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationUserListUsers = "/api.user.v1.User/ListUsers"
 const OperationUserLogin = "/api.user.v1.User/Login"
 const OperationUserRegisterUser = "/api.user.v1.User/RegisterUser"
 
 type UserHTTPServer interface {
+	// ListUsers 根据ID列表批量获取用户信息
+	ListUsers(context.Context, *ListUsersRequest) (*ListUsersReply, error)
 	// Login 用户登录
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
 	// RegisterUser 用户注册
@@ -33,6 +36,7 @@ func RegisterUserHTTPServer(s *http.Server, srv UserHTTPServer) {
 	r := s.Route("/")
 	r.POST("/v1/auth/register", _User_RegisterUser0_HTTP_Handler(srv))
 	r.POST("/v1/auth/login", _User_Login0_HTTP_Handler(srv))
+	r.POST("/v1/users/list", _User_ListUsers0_HTTP_Handler(srv))
 }
 
 func _User_RegisterUser0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) error {
@@ -79,7 +83,30 @@ func _User_Login0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) error 
 	}
 }
 
+func _User_ListUsers0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ListUsersRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationUserListUsers)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListUsers(ctx, req.(*ListUsersRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ListUsersReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type UserHTTPClient interface {
+	ListUsers(ctx context.Context, req *ListUsersRequest, opts ...http.CallOption) (rsp *ListUsersReply, err error)
 	Login(ctx context.Context, req *LoginRequest, opts ...http.CallOption) (rsp *LoginReply, err error)
 	RegisterUser(ctx context.Context, req *RegisterUserRequest, opts ...http.CallOption) (rsp *RegisterUserReply, err error)
 }
@@ -90,6 +117,19 @@ type UserHTTPClientImpl struct {
 
 func NewUserHTTPClient(client *http.Client) UserHTTPClient {
 	return &UserHTTPClientImpl{client}
+}
+
+func (c *UserHTTPClientImpl) ListUsers(ctx context.Context, in *ListUsersRequest, opts ...http.CallOption) (*ListUsersReply, error) {
+	var out ListUsersReply
+	pattern := "/v1/users/list"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationUserListUsers))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 func (c *UserHTTPClientImpl) Login(ctx context.Context, in *LoginRequest, opts ...http.CallOption) (*LoginReply, error) {

@@ -3,7 +3,9 @@ package client
 import (
 	"context"
 	contentv1 "kratos-community/api/content/v1"
+	interactionv1 "kratos-community/api/interaction/v1"
 	userv1 "kratos-community/api/user/v1"
+	relationv1 "kratos-community/api/relation/v1"
 
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
@@ -11,7 +13,7 @@ import (
 )
 
 // ProviderSet 是客户端的依赖注入提供者集合
-var ProviderSet = wire.NewSet(NewUserServiceClient, NewContentServiceClient)
+var ProviderSet = wire.NewSet(NewUserServiceClient, NewContentServiceClient,NewInteractionServiceClient,NewRelationServiceClient)
 
 func NewUserServiceClient(r registry.Discovery) (userv1.UserClient, error) {
 	// discovery:///user-service 是kratos定义的服务发现协议
@@ -40,4 +42,30 @@ func NewContentServiceClient(r registry.Discovery) (contentv1.ContentClient, err
 		return nil, err
 	}
 	return contentv1.NewContentClient(conn), nil
+}
+
+func NewInteractionServiceClient(r registry.Discovery) (interactionv1.InteractionClient, error) {
+	endpoint := "discovery:///interaction-service"
+
+	conn, err := grpc.DialInsecure(context.Background(),
+		grpc.WithEndpoint(endpoint),
+		grpc.WithDiscovery(r),
+	)
+	if err != nil {
+		return nil, err
+	}
+	return interactionv1.NewInteractionClient(conn), nil
+}
+
+func NewRelationServiceClient(r registry.Discovery) (relationv1.RelationClient, error) {
+	endpoint := "discovery:///relation-service"
+
+	conn, err := grpc.DialInsecure(context.Background(),
+		grpc.WithEndpoint(endpoint),
+		grpc.WithDiscovery(r),
+	)
+	if err != nil {
+		return nil, err
+	}
+	return relationv1.NewRelationClient(conn), nil
 }

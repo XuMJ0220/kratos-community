@@ -34,7 +34,15 @@ func wireApp(confServer *conf.Server, confRegistry *conf.Registry, auth *conf.Au
 	if err != nil {
 		return nil, nil, err
 	}
-	gatewayService := service.NewGatewayService(userClient, contentClient)
+	interactionClient, err := client.NewInteractionServiceClient(discovery)
+	if err != nil {
+		return nil, nil, err
+	}
+	relationClient, err := client.NewRelationServiceClient(discovery)
+	if err != nil {
+		return nil, nil, err
+	}
+	gatewayService := service.NewGatewayService(userClient, contentClient, interactionClient, relationClient)
 	registrar := registry.NewRegistry(confRegistry)
 	app := newApp(logger, httpServer, gatewayService, registrar)
 	return app, func() {

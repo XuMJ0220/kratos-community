@@ -24,6 +24,13 @@ service User {
             body: "*"
         };
     }
+    // 根据ID列表批量获取用户信息
+    rpc ListUsers(ListUsersRequest) returns(ListUsersReply){
+        option (google.api.http) = {
+            post: "/v1/users/list"
+            body:"*"
+        };
+    }
 }
 
 // 用户信息结构体
@@ -53,3 +60,12 @@ message LoginReply{
     string token = 1;
     UserInfo user_info = 2;
 }
+
+message ListUsersRequest{
+    repeated uint64 ids = 1 [(validate.rules).repeated.min_items = 1];
+}
+
+message ListUsersReply{
+    repeated UserInfo users = 1;
+}
+

@@ -6,6 +6,52 @@ info:
     title: ""
     version: 0.0.1
 paths:
+    /v1/article/{id}/like:
+        post:
+            tags:
+                - Gateway
+            description: 转发到 Interaction 服务的 LikeArticle 接口
+            operationId: Gateway_LikeArticle
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: userId
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.interaction.v1.LikeArticleReply'
+    /v1/article/{id}/unlike:
+        delete:
+            tags:
+                - Gateway
+            description: 转发到 Interaction 服务的 UnlikeArticle 接口
+            operationId: Gateway_UnlikeArticle
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: userId
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.interaction.v1.UnlikeArticleReply'
     /v1/articles:
         post:
             tags:
@@ -63,6 +109,114 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.user.v1.RegisterUserReply'
+    /v1/users/{id}/follow:
+        post:
+            tags:
+                - Gateway
+            description: 转发到 Relation 服务的 FollowUser 接口
+            operationId: Gateway_FollowUser
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: userId
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.relation.v1.FollowUserReply'
+    /v1/users/{id}/followers:
+        get:
+            tags:
+                - Gateway
+            description: 转发到 Relation 服务的 ListFollowers 接口
+            operationId: Gateway_ListFollowers
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: userId
+                  in: query
+                  schema:
+                    type: string
+                - name: page
+                  in: query
+                  schema:
+                    type: string
+                - name: pageSize
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.relation.v1.ListFollowersReply'
+    /v1/users/{id}/followings:
+        get:
+            tags:
+                - Gateway
+            description: 转发到 Relation 服务的 ListFollowings 接口
+            operationId: Gateway_ListFollowings
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: userId
+                  in: query
+                  schema:
+                    type: string
+                - name: page
+                  in: query
+                  schema:
+                    type: string
+                - name: pageSize
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.relation.v1.ListFollowingsReply'
+    /v1/users/{id}/unfollow:
+        post:
+            tags:
+                - Gateway
+            description: 转发到 Relation 服务的 UnfollowUser 接口
+            operationId: Gateway_UnfollowUser
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: userId
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.relation.v1.UnfollowUserReply'
     v1/articles/{id}:
         get:
             tags:
@@ -191,6 +345,36 @@ components:
                 authorId:
                     type: string
             description: 更新文章请求体
+        api.interaction.v1.LikeArticleReply:
+            type: object
+            properties: {}
+        api.interaction.v1.UnlikeArticleReply:
+            type: object
+            properties: {}
+        api.relation.v1.FollowUserReply:
+            type: object
+            properties: {}
+        api.relation.v1.ListFollowersReply:
+            type: object
+            properties:
+                users:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/api.user.v1.UserInfo'
+                total:
+                    type: string
+        api.relation.v1.ListFollowingsReply:
+            type: object
+            properties:
+                users:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/api.user.v1.UserInfo'
+                total:
+                    type: string
+        api.relation.v1.UnfollowUserReply:
+            type: object
+            properties: {}
         api.user.v1.LoginReply:
             type: object
             properties:
@@ -235,5 +419,7 @@ tags:
       description: 定义 Content 服务
     - name: Gateway
       description: Gatway 服务,定义了所有对外暴露的HTTP接口
+    - name: Interaction
+    - name: Relation
     - name: User
       description: 定义 User 服务

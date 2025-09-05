@@ -1,0 +1,27 @@
+server:
+  http:
+    addr: 0.0.0.0:8003
+    timeout: 1s
+  grpc:
+    addr: 0.0.0.0:9003
+    timeout: 1s
+data:
+  # database:
+  #   driver: mysql
+  #   source: root:root@tcp(127.0.0.1:3306)/test?parseTime=True&loc=Local
+  databases:
+    user_1:
+      driver: mysql
+      source: user3:112233@tcp(192.168.192.1:3310)/kratos_community_interaction?charset=utf8mb4&parseTime=True&loc=Local
+  redis:
+    addr: 192.168.192.1:6379
+    read_timeout: 0.2s
+    write_timeout: 0.2s
+    password: "112233"
+    db: 0
+auth:
+  jwt_secret: ASDFLJKNG@IR!W4RE5@6%T63&#M84*$p%4G835YGZY
+registry: 
+  consul: 
+    address: "192.168.192.1:8500" 
+    scheme: "http"

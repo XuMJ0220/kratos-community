@@ -8,6 +8,10 @@ option go_package = "kratos-community/api/gateway/v1;v1";
 // 导入 user 和 content 服务的 API 定义，因为我们需要复用它们的请求和响应体
 import "user/v1/user.proto";
 import "content/v1/content.proto";
+// 导入 interaction 服务的 API 定义
+import "interaction/v1/interaction.proto";
+// 导入 relation 服务的 API 定义
+import "relation/v1/relation.proto";
 
 import "google/api/annotations.proto";
 
@@ -57,6 +61,48 @@ service Gateway{
     rpc DeleteArticle(api.content.v1.DeleteArticleRequest)returns (api.content.v1.DeleteArticlReply){
         option (google.api.http) = {
             delete:"v1/articles/{id}",
+        };
+    }
+
+    // 转发到 Interaction 服务的 LikeArticle 接口
+    rpc LikeArticle(api.interaction.v1.LikeArticleRequest)returns(api.interaction.v1.LikeArticleReply){
+        option (google.api.http) = {
+            post:"/v1/article/{id}/like"
+        };
+    }
+
+    // 转发到 Interaction 服务的 UnlikeArticle 接口
+    rpc UnlikeArticle(api.interaction.v1.UnlikeArticleRequest)returns(api.interaction.v1.UnlikeArticleReply){
+        option (google.api.http) = {
+            delete:"/v1/article/{id}/unlike"
+        };
+    }
+
+    // 转发到 Relation 服务的 FollowUser 接口
+    rpc FollowUser(api.relation.v1.FollowUserRequest) returns (api.relation.v1.FollowUserReply){
+        option (google.api.http) = {
+            post: "/v1/users/{id}/follow",
+        };
+    }
+
+    // 转发到 Relation 服务的 UnfollowUser 接口
+    rpc UnfollowUser(api.relation.v1.UnfollowUserRequest) returns(api.relation.v1.UnfollowUserReply){
+        option (google.api.http) = {
+            post: "/v1/users/{id}/unfollow",
+        };
+    }
+
+    // 转发到 Relation 服务的 ListFollowings 接口
+    rpc ListFollowings(api.relation.v1.ListFollowingsRequest) returns(api.relation.v1.ListFollowingsReply){
+        option (google.api.http) = {
+            get: "/v1/users/{id}/followings",
+        };
+    }
+    
+    // 转发到 Relation 服务的 ListFollowers 接口
+    rpc ListFollowers(api.relation.v1.ListFollowersRequest) returns(api.relation.v1.ListFollowersReply){
+        option (google.api.http) = {
+            get: "/v1/users/{id}/followers",
         };
     }
 }

@@ -9,9 +9,12 @@
 package v1
 
 import (
+	_ "github.com/envoyproxy/protoc-gen-validate/validate"
+	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
+	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -22,16 +25,225 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type LikeArticleRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 文章ID
+	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LikeArticleRequest) Reset() {
+	*x = LikeArticleRequest{}
+	mi := &file_interaction_v1_interaction_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LikeArticleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LikeArticleRequest) ProtoMessage() {}
+
+func (x *LikeArticleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_interaction_v1_interaction_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LikeArticleRequest.ProtoReflect.Descriptor instead.
+func (*LikeArticleRequest) Descriptor() ([]byte, []int) {
+	return file_interaction_v1_interaction_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *LikeArticleRequest) GetId() uint64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *LikeArticleRequest) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type LikeArticleReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LikeArticleReply) Reset() {
+	*x = LikeArticleReply{}
+	mi := &file_interaction_v1_interaction_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LikeArticleReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LikeArticleReply) ProtoMessage() {}
+
+func (x *LikeArticleReply) ProtoReflect() protoreflect.Message {
+	mi := &file_interaction_v1_interaction_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LikeArticleReply.ProtoReflect.Descriptor instead.
+func (*LikeArticleReply) Descriptor() ([]byte, []int) {
+	return file_interaction_v1_interaction_proto_rawDescGZIP(), []int{1}
+}
+
+type UnlikeArticleRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 文章ID
+	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UnlikeArticleRequest) Reset() {
+	*x = UnlikeArticleRequest{}
+	mi := &file_interaction_v1_interaction_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UnlikeArticleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UnlikeArticleRequest) ProtoMessage() {}
+
+func (x *UnlikeArticleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_interaction_v1_interaction_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UnlikeArticleRequest.ProtoReflect.Descriptor instead.
+func (*UnlikeArticleRequest) Descriptor() ([]byte, []int) {
+	return file_interaction_v1_interaction_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *UnlikeArticleRequest) GetId() uint64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UnlikeArticleRequest) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type UnlikeArticleReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UnlikeArticleReply) Reset() {
+	*x = UnlikeArticleReply{}
+	mi := &file_interaction_v1_interaction_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UnlikeArticleReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UnlikeArticleReply) ProtoMessage() {}
+
+func (x *UnlikeArticleReply) ProtoReflect() protoreflect.Message {
+	mi := &file_interaction_v1_interaction_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UnlikeArticleReply.ProtoReflect.Descriptor instead.
+func (*UnlikeArticleReply) Descriptor() ([]byte, []int) {
+	return file_interaction_v1_interaction_proto_rawDescGZIP(), []int{3}
+}
+
 var File_interaction_v1_interaction_proto protoreflect.FileDescriptor
 
 const file_interaction_v1_interaction_proto_rawDesc = "" +
 	"\n" +
-	" interaction/v1/interaction.proto\x12\x12api.interaction.v1B(Z&kratos-community/api/interaction/v1;v1b\x06proto3"
+	" interaction/v1/interaction.proto\x12\x12api.interaction.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17validate/validate.proto\"F\n" +
+	"\x12LikeArticleRequest\x12\x17\n" +
+	"\x02id\x18\x01 \x01(\x04B\a\xfaB\x042\x02 \x00R\x02id\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x04R\x06userId\"\x12\n" +
+	"\x10LikeArticleReply\"H\n" +
+	"\x14UnlikeArticleRequest\x12\x17\n" +
+	"\x02id\x18\x01 \x01(\x04B\a\xfaB\x042\x02 \x00R\x02id\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x04R\x06userId\"\x14\n" +
+	"\x12UnlikeArticleReply2\x8e\x02\n" +
+	"\vInteraction\x12z\n" +
+	"\vLikeArticle\x12&.api.interaction.v1.LikeArticleRequest\x1a$.api.interaction.v1.LikeArticleReply\"\x1d\x82\xd3\xe4\x93\x02\x17\"\x15/v1/article/{id}/like\x12\x82\x01\n" +
+	"\rUnlikeArticle\x12(.api.interaction.v1.UnlikeArticleRequest\x1a&.api.interaction.v1.UnlikeArticleReply\"\x1f\x82\xd3\xe4\x93\x02\x19*\x17/v1/article/{id}/unlikeB(Z&kratos-community/api/interaction/v1;v1b\x06proto3"
 
-var file_interaction_v1_interaction_proto_goTypes = []any{}
+var (
+	file_interaction_v1_interaction_proto_rawDescOnce sync.Once
+	file_interaction_v1_interaction_proto_rawDescData []byte
+)
+
+func file_interaction_v1_interaction_proto_rawDescGZIP() []byte {
+	file_interaction_v1_interaction_proto_rawDescOnce.Do(func() {
+		file_interaction_v1_interaction_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_interaction_v1_interaction_proto_rawDesc), len(file_interaction_v1_interaction_proto_rawDesc)))
+	})
+	return file_interaction_v1_interaction_proto_rawDescData
+}
+
+var file_interaction_v1_interaction_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_interaction_v1_interaction_proto_goTypes = []any{
+	(*LikeArticleRequest)(nil),   // 0: api.interaction.v1.LikeArticleRequest
+	(*LikeArticleReply)(nil),     // 1: api.interaction.v1.LikeArticleReply
+	(*UnlikeArticleRequest)(nil), // 2: api.interaction.v1.UnlikeArticleRequest
+	(*UnlikeArticleReply)(nil),   // 3: api.interaction.v1.UnlikeArticleReply
+}
 var file_interaction_v1_interaction_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
+	0, // 0: api.interaction.v1.Interaction.LikeArticle:input_type -> api.interaction.v1.LikeArticleRequest
+	2, // 1: api.interaction.v1.Interaction.UnlikeArticle:input_type -> api.interaction.v1.UnlikeArticleRequest
+	1, // 2: api.interaction.v1.Interaction.LikeArticle:output_type -> api.interaction.v1.LikeArticleReply
+	3, // 3: api.interaction.v1.Interaction.UnlikeArticle:output_type -> api.interaction.v1.UnlikeArticleReply
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -48,12 +260,13 @@ func file_interaction_v1_interaction_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_interaction_v1_interaction_proto_rawDesc), len(file_interaction_v1_interaction_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   0,
+			NumMessages:   4,
 			NumExtensions: 0,
-			NumServices:   0,
+			NumServices:   1,
 		},
 		GoTypes:           file_interaction_v1_interaction_proto_goTypes,
 		DependencyIndexes: file_interaction_v1_interaction_proto_depIdxs,
+		MessageInfos:      file_interaction_v1_interaction_proto_msgTypes,
 	}.Build()
 	File_interaction_v1_interaction_proto = out.File
 	file_interaction_v1_interaction_proto_goTypes = nil

@@ -6,4 +6,36 @@ package api.interaction.v1;
 // 2. 定义 Go 包名和路径
 option go_package = "kratos-community/api/interaction/v1;v1";
 
-// 我们暂时不需要定义任何服务，但文件必须有这些基础信息
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+
+service Interaction{
+    // 点赞
+    rpc LikeArticle(LikeArticleRequest)returns(LikeArticleReply){
+        option (google.api.http) = {
+            post:"/v1/article/{id}/like"
+        };
+    }
+    // 取消点赞
+    rpc UnlikeArticle(UnlikeArticleRequest)returns(UnlikeArticleReply){
+        option (google.api.http) = {
+            delete:"/v1/article/{id}/unlike"
+        };
+    }
+}
+
+message LikeArticleRequest{
+    uint64 id = 1 [(validate.rules).uint64.gt = 0]; // 文章ID 
+    uint64 user_id = 2;
+}
+
+message LikeArticleReply{  
+}
+
+message UnlikeArticleRequest{
+    uint64 id = 1 [(validate.rules).uint64.gt = 0]; // 文章ID
+    uint64 user_id = 2;
+}
+
+message UnlikeArticleReply{  
+}

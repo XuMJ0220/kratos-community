@@ -9,9 +9,13 @@
 package v1
 
 import (
+	_ "github.com/envoyproxy/protoc-gen-validate/validate"
+	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	v1 "kratos-community/api/user/v1"
 	reflect "reflect"
+	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -22,19 +26,498 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type FollowUserRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                       // 被关注者的ID
+	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"` // 关注者的ID
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FollowUserRequest) Reset() {
+	*x = FollowUserRequest{}
+	mi := &file_relation_v1_relation_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FollowUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FollowUserRequest) ProtoMessage() {}
+
+func (x *FollowUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_v1_relation_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FollowUserRequest.ProtoReflect.Descriptor instead.
+func (*FollowUserRequest) Descriptor() ([]byte, []int) {
+	return file_relation_v1_relation_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *FollowUserRequest) GetId() uint64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *FollowUserRequest) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type FollowUserReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FollowUserReply) Reset() {
+	*x = FollowUserReply{}
+	mi := &file_relation_v1_relation_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FollowUserReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FollowUserReply) ProtoMessage() {}
+
+func (x *FollowUserReply) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_v1_relation_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FollowUserReply.ProtoReflect.Descriptor instead.
+func (*FollowUserReply) Descriptor() ([]byte, []int) {
+	return file_relation_v1_relation_proto_rawDescGZIP(), []int{1}
+}
+
+type UnfollowUserRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                       // 被取消关注的ID
+	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"` // 取消关注的用户ID
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UnfollowUserRequest) Reset() {
+	*x = UnfollowUserRequest{}
+	mi := &file_relation_v1_relation_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UnfollowUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UnfollowUserRequest) ProtoMessage() {}
+
+func (x *UnfollowUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_v1_relation_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UnfollowUserRequest.ProtoReflect.Descriptor instead.
+func (*UnfollowUserRequest) Descriptor() ([]byte, []int) {
+	return file_relation_v1_relation_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *UnfollowUserRequest) GetId() uint64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UnfollowUserRequest) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type UnfollowUserReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UnfollowUserReply) Reset() {
+	*x = UnfollowUserReply{}
+	mi := &file_relation_v1_relation_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UnfollowUserReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UnfollowUserReply) ProtoMessage() {}
+
+func (x *UnfollowUserReply) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_v1_relation_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UnfollowUserReply.ProtoReflect.Descriptor instead.
+func (*UnfollowUserReply) Descriptor() ([]byte, []int) {
+	return file_relation_v1_relation_proto_rawDescGZIP(), []int{3}
+}
+
+type ListFollowingsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 需要查找关注列表的用户ID
+	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Page          uint64                 `protobuf:"varint,3,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize      uint64                 `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListFollowingsRequest) Reset() {
+	*x = ListFollowingsRequest{}
+	mi := &file_relation_v1_relation_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListFollowingsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListFollowingsRequest) ProtoMessage() {}
+
+func (x *ListFollowingsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_v1_relation_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListFollowingsRequest.ProtoReflect.Descriptor instead.
+func (*ListFollowingsRequest) Descriptor() ([]byte, []int) {
+	return file_relation_v1_relation_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *ListFollowingsRequest) GetId() uint64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *ListFollowingsRequest) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ListFollowingsRequest) GetPage() uint64 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *ListFollowingsRequest) GetPageSize() uint64 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+type ListFollowingsReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Users         []*v1.UserInfo         `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"` // 关注列表
+	Total         uint64                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListFollowingsReply) Reset() {
+	*x = ListFollowingsReply{}
+	mi := &file_relation_v1_relation_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListFollowingsReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListFollowingsReply) ProtoMessage() {}
+
+func (x *ListFollowingsReply) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_v1_relation_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListFollowingsReply.ProtoReflect.Descriptor instead.
+func (*ListFollowingsReply) Descriptor() ([]byte, []int) {
+	return file_relation_v1_relation_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *ListFollowingsReply) GetUsers() []*v1.UserInfo {
+	if x != nil {
+		return x.Users
+	}
+	return nil
+}
+
+func (x *ListFollowingsReply) GetTotal() uint64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+type ListFollowersRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 需要查找粉丝列表的用户ID
+	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Page          uint64                 `protobuf:"varint,3,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize      uint64                 `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListFollowersRequest) Reset() {
+	*x = ListFollowersRequest{}
+	mi := &file_relation_v1_relation_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListFollowersRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListFollowersRequest) ProtoMessage() {}
+
+func (x *ListFollowersRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_v1_relation_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListFollowersRequest.ProtoReflect.Descriptor instead.
+func (*ListFollowersRequest) Descriptor() ([]byte, []int) {
+	return file_relation_v1_relation_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ListFollowersRequest) GetId() uint64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *ListFollowersRequest) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ListFollowersRequest) GetPage() uint64 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *ListFollowersRequest) GetPageSize() uint64 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+type ListFollowersReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Users         []*v1.UserInfo         `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"` // 粉丝列表
+	Total         uint64                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListFollowersReply) Reset() {
+	*x = ListFollowersReply{}
+	mi := &file_relation_v1_relation_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListFollowersReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListFollowersReply) ProtoMessage() {}
+
+func (x *ListFollowersReply) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_v1_relation_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListFollowersReply.ProtoReflect.Descriptor instead.
+func (*ListFollowersReply) Descriptor() ([]byte, []int) {
+	return file_relation_v1_relation_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *ListFollowersReply) GetUsers() []*v1.UserInfo {
+	if x != nil {
+		return x.Users
+	}
+	return nil
+}
+
+func (x *ListFollowersReply) GetTotal() uint64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
 var File_relation_v1_relation_proto protoreflect.FileDescriptor
 
 const file_relation_v1_relation_proto_rawDesc = "" +
 	"\n" +
-	"\x1arelation/v1/relation.proto\x12\x0fapi.relation.v1B%Z#kratos-community/api/relation/v1;v1b\x06proto3"
+	"\x1arelation/v1/relation.proto\x12\x0fapi.relation.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17validate/validate.proto\x1a\x12user/v1/user.proto\"E\n" +
+	"\x11FollowUserRequest\x12\x17\n" +
+	"\x02id\x18\x01 \x01(\x04B\a\xfaB\x042\x02 \x00R\x02id\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x04R\x06userId\"\x11\n" +
+	"\x0fFollowUserReply\"G\n" +
+	"\x13UnfollowUserRequest\x12\x17\n" +
+	"\x02id\x18\x01 \x01(\x04B\a\xfaB\x042\x02 \x00R\x02id\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x04R\x06userId\"\x13\n" +
+	"\x11UnfollowUserReply\"z\n" +
+	"\x15ListFollowingsRequest\x12\x17\n" +
+	"\x02id\x18\x01 \x01(\x04B\a\xfaB\x042\x02 \x00R\x02id\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x04R\x06userId\x12\x12\n" +
+	"\x04page\x18\x03 \x01(\x04R\x04page\x12\x1b\n" +
+	"\tpage_size\x18\x04 \x01(\x04R\bpageSize\"X\n" +
+	"\x13ListFollowingsReply\x12+\n" +
+	"\x05users\x18\x01 \x03(\v2\x15.api.user.v1.UserInfoR\x05users\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x04R\x05total\"y\n" +
+	"\x14ListFollowersRequest\x12\x17\n" +
+	"\x02id\x18\x01 \x01(\x04B\a\xfaB\x042\x02 \x00R\x02id\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x04R\x06userId\x12\x12\n" +
+	"\x04page\x18\x03 \x01(\x04R\x04page\x12\x1b\n" +
+	"\tpage_size\x18\x04 \x01(\x04R\bpageSize\"W\n" +
+	"\x12ListFollowersReply\x12+\n" +
+	"\x05users\x18\x01 \x03(\v2\x15.api.user.v1.UserInfoR\x05users\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x04R\x05total2\xfb\x03\n" +
+	"\bRelation\x12q\n" +
+	"\n" +
+	"FollowUser\x12\".api.relation.v1.FollowUserRequest\x1a .api.relation.v1.FollowUserReply\"\x1d\x82\xd3\xe4\x93\x02\x17\"\x15/v1/users/{id}/follow\x12y\n" +
+	"\fUnfollowUser\x12$.api.relation.v1.UnfollowUserRequest\x1a\".api.relation.v1.UnfollowUserReply\"\x1f\x82\xd3\xe4\x93\x02\x19\"\x17/v1/users/{id}/unfollow\x12\x81\x01\n" +
+	"\x0eListFollowings\x12&.api.relation.v1.ListFollowingsRequest\x1a$.api.relation.v1.ListFollowingsReply\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/v1/users/{id}/followings\x12}\n" +
+	"\rListFollowers\x12%.api.relation.v1.ListFollowersRequest\x1a#.api.relation.v1.ListFollowersReply\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/v1/users/{id}/followersB%Z#kratos-community/api/relation/v1;v1b\x06proto3"
 
-var file_relation_v1_relation_proto_goTypes = []any{}
+var (
+	file_relation_v1_relation_proto_rawDescOnce sync.Once
+	file_relation_v1_relation_proto_rawDescData []byte
+)
+
+func file_relation_v1_relation_proto_rawDescGZIP() []byte {
+	file_relation_v1_relation_proto_rawDescOnce.Do(func() {
+		file_relation_v1_relation_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_relation_v1_relation_proto_rawDesc), len(file_relation_v1_relation_proto_rawDesc)))
+	})
+	return file_relation_v1_relation_proto_rawDescData
+}
+
+var file_relation_v1_relation_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_relation_v1_relation_proto_goTypes = []any{
+	(*FollowUserRequest)(nil),     // 0: api.relation.v1.FollowUserRequest
+	(*FollowUserReply)(nil),       // 1: api.relation.v1.FollowUserReply
+	(*UnfollowUserRequest)(nil),   // 2: api.relation.v1.UnfollowUserRequest
+	(*UnfollowUserReply)(nil),     // 3: api.relation.v1.UnfollowUserReply
+	(*ListFollowingsRequest)(nil), // 4: api.relation.v1.ListFollowingsRequest
+	(*ListFollowingsReply)(nil),   // 5: api.relation.v1.ListFollowingsReply
+	(*ListFollowersRequest)(nil),  // 6: api.relation.v1.ListFollowersRequest
+	(*ListFollowersReply)(nil),    // 7: api.relation.v1.ListFollowersReply
+	(*v1.UserInfo)(nil),           // 8: api.user.v1.UserInfo
+}
 var file_relation_v1_relation_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	8, // 0: api.relation.v1.ListFollowingsReply.users:type_name -> api.user.v1.UserInfo
+	8, // 1: api.relation.v1.ListFollowersReply.users:type_name -> api.user.v1.UserInfo
+	0, // 2: api.relation.v1.Relation.FollowUser:input_type -> api.relation.v1.FollowUserRequest
+	2, // 3: api.relation.v1.Relation.UnfollowUser:input_type -> api.relation.v1.UnfollowUserRequest
+	4, // 4: api.relation.v1.Relation.ListFollowings:input_type -> api.relation.v1.ListFollowingsRequest
+	6, // 5: api.relation.v1.Relation.ListFollowers:input_type -> api.relation.v1.ListFollowersRequest
+	1, // 6: api.relation.v1.Relation.FollowUser:output_type -> api.relation.v1.FollowUserReply
+	3, // 7: api.relation.v1.Relation.UnfollowUser:output_type -> api.relation.v1.UnfollowUserReply
+	5, // 8: api.relation.v1.Relation.ListFollowings:output_type -> api.relation.v1.ListFollowingsReply
+	7, // 9: api.relation.v1.Relation.ListFollowers:output_type -> api.relation.v1.ListFollowersReply
+	6, // [6:10] is the sub-list for method output_type
+	2, // [2:6] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_relation_v1_relation_proto_init() }
@@ -48,12 +531,13 @@ func file_relation_v1_relation_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_relation_v1_relation_proto_rawDesc), len(file_relation_v1_relation_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   0,
+			NumMessages:   8,
 			NumExtensions: 0,
-			NumServices:   0,
+			NumServices:   1,
 		},
 		GoTypes:           file_relation_v1_relation_proto_goTypes,
 		DependencyIndexes: file_relation_v1_relation_proto_depIdxs,
+		MessageInfos:      file_relation_v1_relation_proto_msgTypes,
 	}.Build()
 	File_relation_v1_relation_proto = out.File
 	file_relation_v1_relation_proto_goTypes = nil

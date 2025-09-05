@@ -12,6 +12,8 @@ import (
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
 	v11 "kratos-community/api/content/v1"
+	v12 "kratos-community/api/interaction/v1"
+	v13 "kratos-community/api/relation/v1"
 	v1 "kratos-community/api/user/v1"
 )
 
@@ -21,12 +23,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Gateway_Login_FullMethodName         = "/api.gateway.v1.Gateway/Login"
-	Gateway_RegisterUser_FullMethodName  = "/api.gateway.v1.Gateway/RegisterUser"
-	Gateway_CreateArticle_FullMethodName = "/api.gateway.v1.Gateway/CreateArticle"
-	Gateway_GetArticle_FullMethodName    = "/api.gateway.v1.Gateway/GetArticle"
-	Gateway_UpdateArticle_FullMethodName = "/api.gateway.v1.Gateway/UpdateArticle"
-	Gateway_DeleteArticle_FullMethodName = "/api.gateway.v1.Gateway/DeleteArticle"
+	Gateway_Login_FullMethodName          = "/api.gateway.v1.Gateway/Login"
+	Gateway_RegisterUser_FullMethodName   = "/api.gateway.v1.Gateway/RegisterUser"
+	Gateway_CreateArticle_FullMethodName  = "/api.gateway.v1.Gateway/CreateArticle"
+	Gateway_GetArticle_FullMethodName     = "/api.gateway.v1.Gateway/GetArticle"
+	Gateway_UpdateArticle_FullMethodName  = "/api.gateway.v1.Gateway/UpdateArticle"
+	Gateway_DeleteArticle_FullMethodName  = "/api.gateway.v1.Gateway/DeleteArticle"
+	Gateway_LikeArticle_FullMethodName    = "/api.gateway.v1.Gateway/LikeArticle"
+	Gateway_UnlikeArticle_FullMethodName  = "/api.gateway.v1.Gateway/UnlikeArticle"
+	Gateway_FollowUser_FullMethodName     = "/api.gateway.v1.Gateway/FollowUser"
+	Gateway_UnfollowUser_FullMethodName   = "/api.gateway.v1.Gateway/UnfollowUser"
+	Gateway_ListFollowings_FullMethodName = "/api.gateway.v1.Gateway/ListFollowings"
+	Gateway_ListFollowers_FullMethodName  = "/api.gateway.v1.Gateway/ListFollowers"
 )
 
 // GatewayClient is the client API for Gateway service.
@@ -47,6 +55,18 @@ type GatewayClient interface {
 	UpdateArticle(ctx context.Context, in *v11.UpdateArticleRequest, opts ...grpc.CallOption) (*v11.UpdateArticleReply, error)
 	// 转发到 Content 服务的 DeleteArticle 接口
 	DeleteArticle(ctx context.Context, in *v11.DeleteArticleRequest, opts ...grpc.CallOption) (*v11.DeleteArticlReply, error)
+	// 转发到 Interaction 服务的 LikeArticle 接口
+	LikeArticle(ctx context.Context, in *v12.LikeArticleRequest, opts ...grpc.CallOption) (*v12.LikeArticleReply, error)
+	// 转发到 Interaction 服务的 UnlikeArticle 接口
+	UnlikeArticle(ctx context.Context, in *v12.UnlikeArticleRequest, opts ...grpc.CallOption) (*v12.UnlikeArticleReply, error)
+	// 转发到 Relation 服务的 FollowUser 接口
+	FollowUser(ctx context.Context, in *v13.FollowUserRequest, opts ...grpc.CallOption) (*v13.FollowUserReply, error)
+	// 转发到 Relation 服务的 UnfollowUser 接口
+	UnfollowUser(ctx context.Context, in *v13.UnfollowUserRequest, opts ...grpc.CallOption) (*v13.UnfollowUserReply, error)
+	// 转发到 Relation 服务的 ListFollowings 接口
+	ListFollowings(ctx context.Context, in *v13.ListFollowingsRequest, opts ...grpc.CallOption) (*v13.ListFollowingsReply, error)
+	// 转发到 Relation 服务的 ListFollowers 接口
+	ListFollowers(ctx context.Context, in *v13.ListFollowersRequest, opts ...grpc.CallOption) (*v13.ListFollowersReply, error)
 }
 
 type gatewayClient struct {
@@ -117,6 +137,66 @@ func (c *gatewayClient) DeleteArticle(ctx context.Context, in *v11.DeleteArticle
 	return out, nil
 }
 
+func (c *gatewayClient) LikeArticle(ctx context.Context, in *v12.LikeArticleRequest, opts ...grpc.CallOption) (*v12.LikeArticleReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v12.LikeArticleReply)
+	err := c.cc.Invoke(ctx, Gateway_LikeArticle_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gatewayClient) UnlikeArticle(ctx context.Context, in *v12.UnlikeArticleRequest, opts ...grpc.CallOption) (*v12.UnlikeArticleReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v12.UnlikeArticleReply)
+	err := c.cc.Invoke(ctx, Gateway_UnlikeArticle_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gatewayClient) FollowUser(ctx context.Context, in *v13.FollowUserRequest, opts ...grpc.CallOption) (*v13.FollowUserReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v13.FollowUserReply)
+	err := c.cc.Invoke(ctx, Gateway_FollowUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gatewayClient) UnfollowUser(ctx context.Context, in *v13.UnfollowUserRequest, opts ...grpc.CallOption) (*v13.UnfollowUserReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v13.UnfollowUserReply)
+	err := c.cc.Invoke(ctx, Gateway_UnfollowUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gatewayClient) ListFollowings(ctx context.Context, in *v13.ListFollowingsRequest, opts ...grpc.CallOption) (*v13.ListFollowingsReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v13.ListFollowingsReply)
+	err := c.cc.Invoke(ctx, Gateway_ListFollowings_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gatewayClient) ListFollowers(ctx context.Context, in *v13.ListFollowersRequest, opts ...grpc.CallOption) (*v13.ListFollowersReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v13.ListFollowersReply)
+	err := c.cc.Invoke(ctx, Gateway_ListFollowers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GatewayServer is the server API for Gateway service.
 // All implementations must embed UnimplementedGatewayServer
 // for forward compatibility.
@@ -135,6 +215,18 @@ type GatewayServer interface {
 	UpdateArticle(context.Context, *v11.UpdateArticleRequest) (*v11.UpdateArticleReply, error)
 	// 转发到 Content 服务的 DeleteArticle 接口
 	DeleteArticle(context.Context, *v11.DeleteArticleRequest) (*v11.DeleteArticlReply, error)
+	// 转发到 Interaction 服务的 LikeArticle 接口
+	LikeArticle(context.Context, *v12.LikeArticleRequest) (*v12.LikeArticleReply, error)
+	// 转发到 Interaction 服务的 UnlikeArticle 接口
+	UnlikeArticle(context.Context, *v12.UnlikeArticleRequest) (*v12.UnlikeArticleReply, error)
+	// 转发到 Relation 服务的 FollowUser 接口
+	FollowUser(context.Context, *v13.FollowUserRequest) (*v13.FollowUserReply, error)
+	// 转发到 Relation 服务的 UnfollowUser 接口
+	UnfollowUser(context.Context, *v13.UnfollowUserRequest) (*v13.UnfollowUserReply, error)
+	// 转发到 Relation 服务的 ListFollowings 接口
+	ListFollowings(context.Context, *v13.ListFollowingsRequest) (*v13.ListFollowingsReply, error)
+	// 转发到 Relation 服务的 ListFollowers 接口
+	ListFollowers(context.Context, *v13.ListFollowersRequest) (*v13.ListFollowersReply, error)
 	mustEmbedUnimplementedGatewayServer()
 }
 
@@ -162,6 +254,24 @@ func (UnimplementedGatewayServer) UpdateArticle(context.Context, *v11.UpdateArti
 }
 func (UnimplementedGatewayServer) DeleteArticle(context.Context, *v11.DeleteArticleRequest) (*v11.DeleteArticlReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteArticle not implemented")
+}
+func (UnimplementedGatewayServer) LikeArticle(context.Context, *v12.LikeArticleRequest) (*v12.LikeArticleReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LikeArticle not implemented")
+}
+func (UnimplementedGatewayServer) UnlikeArticle(context.Context, *v12.UnlikeArticleRequest) (*v12.UnlikeArticleReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnlikeArticle not implemented")
+}
+func (UnimplementedGatewayServer) FollowUser(context.Context, *v13.FollowUserRequest) (*v13.FollowUserReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FollowUser not implemented")
+}
+func (UnimplementedGatewayServer) UnfollowUser(context.Context, *v13.UnfollowUserRequest) (*v13.UnfollowUserReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnfollowUser not implemented")
+}
+func (UnimplementedGatewayServer) ListFollowings(context.Context, *v13.ListFollowingsRequest) (*v13.ListFollowingsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListFollowings not implemented")
+}
+func (UnimplementedGatewayServer) ListFollowers(context.Context, *v13.ListFollowersRequest) (*v13.ListFollowersReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListFollowers not implemented")
 }
 func (UnimplementedGatewayServer) mustEmbedUnimplementedGatewayServer() {}
 func (UnimplementedGatewayServer) testEmbeddedByValue()                 {}
@@ -292,6 +402,114 @@ func _Gateway_DeleteArticle_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Gateway_LikeArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v12.LikeArticleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GatewayServer).LikeArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Gateway_LikeArticle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GatewayServer).LikeArticle(ctx, req.(*v12.LikeArticleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Gateway_UnlikeArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v12.UnlikeArticleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GatewayServer).UnlikeArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Gateway_UnlikeArticle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GatewayServer).UnlikeArticle(ctx, req.(*v12.UnlikeArticleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Gateway_FollowUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v13.FollowUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GatewayServer).FollowUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Gateway_FollowUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GatewayServer).FollowUser(ctx, req.(*v13.FollowUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Gateway_UnfollowUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v13.UnfollowUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GatewayServer).UnfollowUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Gateway_UnfollowUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GatewayServer).UnfollowUser(ctx, req.(*v13.UnfollowUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Gateway_ListFollowings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v13.ListFollowingsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GatewayServer).ListFollowings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Gateway_ListFollowings_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GatewayServer).ListFollowings(ctx, req.(*v13.ListFollowingsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Gateway_ListFollowers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v13.ListFollowersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GatewayServer).ListFollowers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Gateway_ListFollowers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GatewayServer).ListFollowers(ctx, req.(*v13.ListFollowersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Gateway_ServiceDesc is the grpc.ServiceDesc for Gateway service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -322,6 +540,30 @@ var Gateway_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteArticle",
 			Handler:    _Gateway_DeleteArticle_Handler,
+		},
+		{
+			MethodName: "LikeArticle",
+			Handler:    _Gateway_LikeArticle_Handler,
+		},
+		{
+			MethodName: "UnlikeArticle",
+			Handler:    _Gateway_UnlikeArticle_Handler,
+		},
+		{
+			MethodName: "FollowUser",
+			Handler:    _Gateway_FollowUser_Handler,
+		},
+		{
+			MethodName: "UnfollowUser",
+			Handler:    _Gateway_UnfollowUser_Handler,
+		},
+		{
+			MethodName: "ListFollowings",
+			Handler:    _Gateway_ListFollowings_Handler,
+		},
+		{
+			MethodName: "ListFollowers",
+			Handler:    _Gateway_ListFollowers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
