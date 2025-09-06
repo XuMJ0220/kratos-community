@@ -10,6 +10,7 @@ message Bootstrap {
   Data data = 2;
   Auth auth = 3;
   Registry registry = 4;
+  CacheMode cache_mode = 5;
 }
 
 message Server {
@@ -56,4 +57,10 @@ message Registry{
     string scheme = 2;
   }
   Consul consul = 1; 
+}
+
+// 缓存模式
+message CacheMode{
+  string cache_penetration = 1; // 防止缓存穿透模式
+  string cache_breakdown = 2; // 防止缓存击穿模式
 }

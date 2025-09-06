@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"kratos-community/internal/conf"
 	"kratos-community/internal/content/biz"
 	"time"
 
@@ -15,14 +16,16 @@ import (
 )
 
 type contentRepo struct {
-	data *Data
-	log  *log.Helper
+	data      *Data
+	log       *log.Helper
+	cacheMode *conf.CacheMode
 }
 
-func NewContentRepo(data *Data, logger log.Logger) biz.ContentRepo {
+func NewContentRepo(data *Data, logger log.Logger, cacheMode *conf.CacheMode) biz.ContentRepo {
 	return &contentRepo{
-		data: data,
-		log:  log.NewHelper(logger),
+		data:      data,
+		log:       log.NewHelper(logger),
+		cacheMode: cacheMode,
 	}
 }
 
@@ -74,6 +77,17 @@ func (c *contentRepo) GetArticle(ctx context.Context, articleId uint64) (*biz.Ar
 	if err != nil {
 		c.log.Errorf("GetArticle: %v", err)         // 输出错误日志
 		if errors.Is(err, gorm.ErrRecordNotFound) { // 不存在该行数据
+			if c.cacheMode.CachePenetration == "1" {
+				// 设置空缓存对象
+				nilArtiStr, err := json.Marshal(biz.Article{})
+				// 如果序列化失败，直接返回
+				if err != nil {
+					c.log.Errorf("json.Marshal error: %v", err)
+					return nil, biz.ErrInternalServer
+				}
+				c.data.rdb1.Set(key, nilArtiStr, 1*time.Minute)
+			}
+
 			return nil, biz.ErrArticleNotFound
 		} else { // 其他错误
 			return nil, err

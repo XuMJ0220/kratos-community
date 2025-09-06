@@ -25,3 +25,5 @@ registry:
   consul: 
     address: "192.168.192.1:8500" 
     scheme: "http"
+cacheMode:
+  cache_penetration: "1" #1: 设置空缓存模式 2: 设置布隆过滤器模式 
