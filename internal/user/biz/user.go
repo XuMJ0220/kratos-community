@@ -19,12 +19,14 @@ var (
 	ErrUserNotFound         = errors.NotFound("User_Not_Found", "用户名或密码错误")
 	ErrUserAlreadyExist     = errors.Conflict("User_Already_Exist", "用户或邮箱已存在")
 	ErrGenerateToken        = errors.InternalServer("GenerateToken_Error", "生成Token失败")
+	ErrInternalServer       = errors.InternalServer("InternalServer_Error", "服务器内部错误")
 )
 
 // UserRepo 与数据库交互的接口
 type UserRepo interface {
 	CreateUser(ctx context.Context, ru *RegisterUser) error
 	GetUserByUserName(ctx context.Context, userName string) (*GetUserResponse, error)
+	GetUsersByIds(ctx context.Context, ids []uint64) ([]*v1.UserInfo, error)
 }
 
 type RegisterUser struct {
@@ -98,4 +100,8 @@ func (uc *UserUsecase) Login(ctx context.Context, userName, password string) (*L
 		Token:    token,
 		UserInfo: &user.UserInfo,
 	}, nil
+}
+
+func (uc *UserUsecase) ListUsers(ctx context.Context, ids []uint64) ([]*v1.UserInfo,error){
+	return uc.repo.GetUsersByIds(ctx, ids)
 }

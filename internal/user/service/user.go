@@ -35,3 +35,13 @@ func (s *UserService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 		UserInfo: r.UserInfo,
 	}, nil
 }
+
+func (s *UserService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (*pb.ListUsersReply, error) {
+	users,err := s.uc.ListUsers(ctx, req.Ids)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.ListUsersReply{
+		Users: users,
+	}, nil
+}

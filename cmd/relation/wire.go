@@ -9,6 +9,7 @@ import (
 	"kratos-community/internal/conf"
 	"kratos-community/internal/registry"
 	"kratos-community/internal/relation/biz"
+	"kratos-community/internal/relation/client"
 	"kratos-community/internal/relation/data"
 	"kratos-community/internal/relation/service"
 	"kratos-community/internal/server"
@@ -19,5 +20,5 @@ import (
 )
 
 func wireApp(*conf.Server, *conf.Data, *conf.Auth, *conf.Registry, log.Logger) (*kratos.App, func(), error) {
-	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, registry.ProviderSet, newApp))
+	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, client.ProviderSet, registry.ProviderSet, newApp))
 }

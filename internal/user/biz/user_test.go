@@ -43,6 +43,10 @@ func (r *mockUserRepo) CreateUser(ctx context.Context, ru *RegisterUser) error {
 	return nil
 }
 
+func (r *mockUserRepo) GetUsersByIds(ctx context.Context, ids []uint64) ([]*v1.UserInfo, error) {
+	return nil, nil
+}
+
 // TestLogin
 func TestLogin(t *testing.T) {
 	// 创建一个UserUsecase实例，并且注入我们手写的mockRepo
@@ -81,7 +85,7 @@ func TestLogin(t *testing.T) {
 	// 遍历并运行所有测试用例
 	for _, tc := range testCase {
 		// 创建一个局部变量副本，防止闭包捕获问题
-		tc := tc 
+		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel() // 加上这行可以让测试并行，速度更快
 			// 调用我们测试的Login方法

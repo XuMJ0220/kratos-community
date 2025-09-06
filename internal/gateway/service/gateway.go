@@ -133,6 +133,14 @@ func (s *GatewayService) UnfollowUser(ctx context.Context, req *relationv1.Unfol
 	return s.relationClient.UnfollowUser(ctx, req)
 }
 
+func (s *GatewayService) ListFollowings(ctx context.Context, req *relationv1.ListFollowingsRequest) (*relationv1.ListFollowingsReply, error) {
+	return s.relationClient.ListFollowings(ctx, req)
+}
+
+func (s *GatewayService) ListFollowers(ctx context.Context, req *relationv1.ListFollowersRequest) (*relationv1.ListFollowersReply, error) {
+	return s.relationClient.ListFollowers(ctx, req)
+}
+
 // getUserId 获取从Token中携带的id
 func getUserId(ctx context.Context) (uint64, error) {
 	// 从 jwt 中获取user_id

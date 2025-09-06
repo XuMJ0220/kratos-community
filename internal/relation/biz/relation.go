@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	userv1 "kratos-community/api/user/v1"
 	"kratos-community/internal/conf"
 
 	"github.com/go-kratos/kratos/v2/errors"
@@ -26,23 +27,27 @@ type RelationRepo interface {
 	CreateRelation(ctx context.Context, r *Relation) error // 关注
 	DeleteRelation(ctx context.Context, r *Relation) error // 取关
 	// Redis操作
-	AddFollowing(ctx context.Context, userId, followingId uint64) error    // 往userId的关注列表里添加followingId
-	RemoveFollowing(ctx context.Context, userId, followingId uint64) error // 往userId的关注列表里移除followingId
-	AddFollower(ctx context.Context, userId, followerId uint64) error      // 往userId的粉丝列表里添加followerId(有人关注userId会触发)
-	RemoveFollower(ctx context.Context, userId, followerId uint64) error   // 往userId的粉丝列表里移除followerId(有人取关userId会触发)
+	AddFollowing(ctx context.Context, userId, followingId uint64) error                           // 往userId的关注列表里添加followingId
+	RemoveFollowing(ctx context.Context, userId, followingId uint64) error                        // 往userId的关注列表里移除followingId
+	AddFollower(ctx context.Context, userId, followerId uint64) error                             // 往userId的粉丝列表里添加followerId(有人关注userId会触发)
+	RemoveFollower(ctx context.Context, userId, followerId uint64) error                          // 往userId的粉丝列表里移除followerId(有人取关userId会触发)
+	ListFollowingIDs(ctx context.Context, userId, page, pageSize uint64) ([]uint64, int64, error) // 获取userId的关注列表
+	ListFollowerIDs(ctx context.Context, userId, page, pageSize uint64) ([]uint64, int64, error)  // 获取userId的粉丝列表
 }
 
 type RelationUsecase struct {
-	repo      RelationRepo
-	log       *log.Helper
-	jwtSecret string
+	repo       RelationRepo
+	log        *log.Helper
+	jwtSecret  string
+	userClient userv1.UserClient
 }
 
-func NewRelationUsecase(repo RelationRepo, logger log.Logger, jwtSecret *conf.Auth) *RelationUsecase {
+func NewRelationUsecase(repo RelationRepo, logger log.Logger, jwtSecret *conf.Auth, userClient userv1.UserClient) *RelationUsecase {
 	return &RelationUsecase{
-		repo:      repo,
-		log:       log.NewHelper(logger),
-		jwtSecret: jwtSecret.JwtSecret,
+		repo:       repo,
+		log:        log.NewHelper(logger),
+		jwtSecret:  jwtSecret.JwtSecret,
+		userClient: userClient,
 	}
 }
 
@@ -92,4 +97,38 @@ func (uc *RelationUsecase) UnfollowUser(ctx context.Context, followId, following
 		uc.log.Errorf("UnfollowUser: RemoveFollower failed: error: %v followId :%d followingId :%d ", err, followId, followingId)
 	}
 	return nil
+}
+
+func (uc *RelationUsecase) ListFollowings(ctx context.Context, userId, page, pageSize uint64) ([]*userv1.UserInfo, int64, error) {
+	followingIds, total, err := uc.repo.ListFollowingIDs(ctx, userId, page, pageSize)
+	if err != nil {
+		return nil, 0, err
+	}
+	if len(followingIds) == 0 {
+		return []*userv1.UserInfo{}, 0, nil
+	}
+	reply,err:=uc.userClient.ListUsers(ctx,&userv1.ListUsersRequest{
+		Ids: followingIds,
+	})
+	if err!=nil{
+		return nil,0,err
+	}
+	return reply.Users, total, nil
+}
+
+func (uc *RelationUsecase) ListFollowers(ctx context.Context, userId, page, pageSize uint64) ([]*userv1.UserInfo, int64, error) {
+	followerIds, total, err := uc.repo.ListFollowerIDs(ctx, userId, page, pageSize)
+	if err != nil {
+		return nil, 0, err
+	}
+	if len(followerIds) == 0 {
+		return []*userv1.UserInfo{}, 0, nil
+	}
+	reply,err:=uc.userClient.ListUsers(ctx,&userv1.ListUsersRequest{
+		Ids: followerIds,
+	})
+	if err!=nil{
+		return nil,0,err
+	}
+	return reply.Users, total, nil
 }

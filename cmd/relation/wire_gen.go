@@ -12,6 +12,7 @@ import (
 	"kratos-community/internal/conf"
 	"kratos-community/internal/registry"
 	"kratos-community/internal/relation/biz"
+	"kratos-community/internal/relation/client"
 	"kratos-community/internal/relation/data"
 	"kratos-community/internal/relation/service"
 	"kratos-community/internal/server"
@@ -30,16 +31,22 @@ func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, conf
 	if err != nil {
 		return nil, nil, err
 	}
-	client, err := data.NewRedisClient(confData, logger)
+	redisClient, err := data.NewRedisClient(confData, logger)
 	if err != nil {
 		return nil, nil, err
 	}
-	dataData, cleanup, err := data.NewData(db, client, logger)
+	dataData, cleanup, err := data.NewData(db, redisClient, logger)
 	if err != nil {
 		return nil, nil, err
 	}
 	relationRepo := data.NewRelationRepo(dataData, logger)
-	relationUsecase := biz.NewRelationUsecase(relationRepo, logger, auth)
+	discovery := registry.NewDiscovery(confRegistry)
+	userClient, err := client.NewUserServiceClient(discovery)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	relationUsecase := biz.NewRelationUsecase(relationRepo, logger, auth, userClient)
 	relationService := service.NewRelationService(relationUsecase)
 	registrar := registry.NewRegistry(confRegistry)
 	app := newApp(logger, grpcServer, httpServer, relationService, registrar)

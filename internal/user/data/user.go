@@ -69,3 +69,24 @@ func (r *userRepo) GetUserByUserName(ctx context.Context, userName string) (*biz
 		Password: user.Password,
 	}, nil
 }
+
+func (r *userRepo) GetUsersByIds(ctx context.Context, ids []uint64) ([]*v1.UserInfo, error) {
+	users := []User{}
+	result := r.data.db1.WithContext(ctx).Where("id in ?", ids).Find(&users)
+	if result.Error != nil {
+		r.log.Errorf("GetUsersByIds error : %v", result.Error)
+		return nil, biz.ErrInternalServer
+	}
+	if result.RowsAffected == 0 {
+		return nil, biz.ErrUserNotFound
+	}
+	var userInfos []*v1.UserInfo
+	for _, v := range users {
+		userInfos = append(userInfos, &v1.UserInfo{
+			Id:       v.ID,
+			UserName: v.UserName,
+			Email:    v.Email,
+		})
+	}
+	return userInfos, nil
+}
