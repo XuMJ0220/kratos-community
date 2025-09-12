@@ -5,12 +5,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+
 	"kratos-community/internal/conf"
 	"kratos-community/internal/content/biz"
+	"kratos-community/internal/pkg/redislock"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-redis/redis"
+	"golang.org/x/sync/singleflight"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"gorm.io/gorm"
 )
@@ -19,6 +22,7 @@ type contentRepo struct {
 	data      *Data
 	log       *log.Helper
 	cacheMode *conf.CacheMode
+	g         singleflight.Group
 }
 
 func NewContentRepo(data *Data, logger log.Logger, cacheMode *conf.CacheMode) biz.ContentRepo {
@@ -26,6 +30,7 @@ func NewContentRepo(data *Data, logger log.Logger, cacheMode *conf.CacheMode) bi
 		data:      data,
 		log:       log.NewHelper(logger),
 		cacheMode: cacheMode,
+		g:         singleflight.Group{},
 	}
 }
 
@@ -73,53 +78,77 @@ func (c *contentRepo) GetArticle(ctx context.Context, articleId uint64) (*biz.Ar
 	}
 	// 3. redis 不命中,去mysql中查询
 	c.log.Infof("redis miss, get article from mysql")
-	article, err := gorm.G[Article](c.data.db1).Where("id = ?", articleId).First(ctx)
-	if err != nil {
-		c.log.Errorf("GetArticle: %v", err)         // 输出错误日志
-		if errors.Is(err, gorm.ErrRecordNotFound) { // 不存在该行数据
-			if c.cacheMode.CachePenetration == "1" {
-				// 设置空缓存对象
-				nilArtiStr, err := json.Marshal(biz.Article{})
-				// 如果序列化失败，直接返回
-				if err != nil {
-					c.log.Errorf("json.Marshal error: %v", err)
-					return nil, biz.ErrInternalServer
-				}
-				c.data.rdb1.Set(key, nilArtiStr, 1*time.Minute)
-			}
-
-			return nil, biz.ErrArticleNotFound
-		} else { // 其他错误
-			return nil, err
+	// 用分布式锁防止缓存击穿
+	lockKey := fmt.Sprintf("lock:article:%d", articleId)
+	// 外面嵌套一层singleflght
+	v, err, _ := c.g.Do(lockKey, func() (interface{}, error) {
+		lock := redislock.NewRedisLock(c.data.rdb1, lockKey, 10*time.Second)
+		locked, lockErr := lock.Lock(50*time.Millisecond, 3)
+		// 获取锁失败
+		if lockErr != nil || !locked {
+			return nil, errors.New("concurrent lock failed, retry later")
 		}
-	}
-	if article.DeletedAt.Valid {
-		return nil, biz.ErrArticleNotFound
-	}
+		defer lock.Unlock()
 
-	bizArticle := biz.Article{
-		Id:        articleId,
-		Title:     article.Title,
-		Content:   article.Content,
-		AuthorId:  article.AuthorID,
-		CreatedAt: timestamppb.New(article.CreatedAt),
-		UpdatedAt: timestamppb.New(article.UpdatedAt),
-	}
+		article, err := gorm.G[Article](c.data.db1).Where("id = ?", articleId).First(ctx)
+		if err != nil {
+			c.log.Errorf("GetArticle: %v", err)         // 输出错误日志
+			if errors.Is(err, gorm.ErrRecordNotFound) { // 不存在该行数据
+				if c.cacheMode.CachePenetration == "1" {
+					// 设置空缓存对象
+					nilArtiStr, err := json.Marshal(biz.Article{})
+					// 如果序列化失败，直接返回
+					if err != nil {
+						c.log.Errorf("json.Marshal error: %v", err)
+						return nil, biz.ErrInternalServer
+					}
+					c.data.rdb1.Set(key, nilArtiStr, 1*time.Minute)
+				}
 
-	// 4. 将mysql中的数据序列化成JSON字符串
-	jsonData, err := json.Marshal(bizArticle)
-	if err != nil {
-		c.log.Errorf("json.Marshal error: %v", err)
-		// 如果反序列化失败了，我们也只能提前返回了
+				return nil, biz.ErrArticleNotFound
+			} else { // 其他错误
+				return nil, err
+			}
+		}
+		if article.DeletedAt.Valid {
+			return nil, biz.ErrArticleNotFound
+		}
+
+		bizArticle := biz.Article{
+			Id:        articleId,
+			Title:     article.Title,
+			Content:   article.Content,
+			AuthorId:  article.AuthorID,
+			CreatedAt: timestamppb.New(article.CreatedAt),
+			UpdatedAt: timestamppb.New(article.UpdatedAt),
+		}
+
+		// 4. 将mysql中的数据序列化成JSON字符串
+		jsonData, err := json.Marshal(bizArticle)
+		if err != nil {
+			c.log.Errorf("json.Marshal error: %v", err)
+			// 如果反序列化失败了，我们也只能提前返回了
+			return &bizArticle, nil
+		}
+
+		// 5. 将JSON数据写入Redis缓存，并设置过期时间
+		// 设置一个5分钟过期时间
+		if err := c.data.rdb1.Set(key, jsonData, 5*time.Minute).Err(); err != nil {
+			c.log.Errorf("redis Set error: %v", err)
+		}
 		return &bizArticle, nil
+	})
+
+	if err != nil {
+		// 抢锁失败
+		if err.Error() == "concurrent lock failed, retry later" {
+			time.Sleep(time.Millisecond * 100)
+			return c.GetArticle(ctx, articleId)
+		}
+		return nil, err
 	}
 
-	// 5. 将JSON数据写入Redis缓存，并设置过期时间
-	// 设置一个5分钟过期时间
-	if err := c.data.rdb1.Set(key, jsonData, 5*time.Minute).Err(); err != nil {
-		c.log.Errorf("redis Set error: %v", err)
-	}
-	return &bizArticle, nil
+	return v.(*biz.Article), nil
 }
 
 func (c *contentRepo) UpdateArticle(ctx context.Context, articleId uint64, title, content string) error {
