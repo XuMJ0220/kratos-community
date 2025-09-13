@@ -8,12 +8,19 @@ import (
 	"github.com/google/wire"
 )
 
+// KafkaClient 生产者客户端
 type KafkaClient struct {
 	producer *kafka.Producer
 	log      *log.Helper
 }
 
-var ProviderSet = wire.NewSet(NewKafkaClient)
+// KafkaConsumerClient 消费者客户端
+type KafkaConsumerClient struct {
+	Consumer *kafka.Consumer
+	log      *log.Helper
+}
+
+var ProviderSet = wire.NewSet(NewKafkaClient, NewKafkaConsumerClient)
 
 func NewKafkaClient(kaf *conf.Kafka, logger log.Logger) (*KafkaClient, func(), error) {
 	// 1. 创建生产者配置
@@ -29,7 +36,7 @@ func NewKafkaClient(kaf *conf.Kafka, logger log.Logger) (*KafkaClient, func(), e
 	// 2. 创建生产者实例
 	p, err := kafka.NewProducer(config)
 	if err != nil {
-		log.Errorf("kafka producer init failed, err: %v", err)
+		log.Errorf("kafka生存者实例创建失败, err: %v", err)
 		return nil, nil, err
 	}
 
@@ -89,4 +96,41 @@ func (k *KafkaClient) ProducerMessage(topic, key, value, headersKey, headersValu
 	}
 
 	return nil
+}
+
+func NewKafkaConsumerClient(kaf *conf.Kafka, logger log.Logger) (*KafkaConsumerClient, func(), error) {
+	// 1. 创建消费者配置
+	config := &kafka.ConfigMap{
+		"bootstrap.servers": kaf.Bootstrap.Servers,
+		// 消费者组ID，所有使用相同group.id的消费者实例都属于同一组
+		"group.id": kaf.Group.Id,
+		// "earliest": 从最早的消息开始
+		// "latest": 从最新的消息开始
+		"auto.offset.reset": kaf.Auto.Offset.Reset_,
+		// 是否自动提交位移，我们手动控制的时候是最可靠的
+		"enable.auto.commit": kaf.Enable.Auto.Commit,
+	}
+	// 2. 创建消费者实例
+	c, err := kafka.NewConsumer(config)
+	if err != nil {
+		log.Errorf("kafka消费者实例创建失败, err: %v", err)
+		return nil, nil, err
+	}
+
+	// 3. 订阅主题
+	err = c.SubscribeTopics(kaf.SubTopics,nil)
+	if err!=nil{
+		log.Errorf("kafka消费者订阅主题失败, err: %v", err)
+		return nil, nil, err
+	}
+	
+	cleanup := func() {
+		log.Info("closing kafka consumer")
+		c.Close()
+	}
+
+	return &KafkaConsumerClient{
+		Consumer: c,
+		log:      log.NewHelper(logger),
+	}, cleanup, nil
 }

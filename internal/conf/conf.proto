@@ -72,10 +72,26 @@ message Kafka{
     string servers = 1;
   }
   message Enable{
+    message Auto{
+      string commit = 1;
+    }
     string idepotence = 1;
+    Auto auto = 2;
+  }
+  message Group{
+    string id = 1;
+  }
+  message Auto{
+    message Offset{
+      string reset = 1;
+    }
+    Offset offset = 1;
   }
   Bootstrap bootstrap = 1;
   Enable enable = 2;
   string acks = 3; 
   int32 retries = 4; // 重试次数
+  Group group = 5;
+  Auto auto = 6;
+  repeated string sub_topics = 7; // 订阅主题
 }

@@ -360,6 +360,9 @@ type Kafka struct {
 	Enable        *Kafka_Enable          `protobuf:"bytes,2,opt,name=enable,proto3" json:"enable,omitempty"`
 	Acks          string                 `protobuf:"bytes,3,opt,name=acks,proto3" json:"acks,omitempty"`
 	Retries       int32                  `protobuf:"varint,4,opt,name=retries,proto3" json:"retries,omitempty"` // 重试次数
+	Group         *Kafka_Group           `protobuf:"bytes,5,opt,name=group,proto3" json:"group,omitempty"`
+	Auto          *Kafka_Auto            `protobuf:"bytes,6,opt,name=auto,proto3" json:"auto,omitempty"`
+	SubTopics     []string               `protobuf:"bytes,7,rep,name=sub_topics,json=subTopics,proto3" json:"sub_topics,omitempty"` // 订阅主题
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -420,6 +423,27 @@ func (x *Kafka) GetRetries() int32 {
 		return x.Retries
 	}
 	return 0
+}
+
+func (x *Kafka) GetGroup() *Kafka_Group {
+	if x != nil {
+		return x.Group
+	}
+	return nil
+}
+
+func (x *Kafka) GetAuto() *Kafka_Auto {
+	if x != nil {
+		return x.Auto
+	}
+	return nil
+}
+
+func (x *Kafka) GetSubTopics() []string {
+	if x != nil {
+		return x.SubTopics
+	}
+	return nil
 }
 
 type Server_HTTP struct {
@@ -777,6 +801,7 @@ func (x *Kafka_Bootstrap) GetServers() string {
 type Kafka_Enable struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Idepotence    string                 `protobuf:"bytes,1,opt,name=idepotence,proto3" json:"idepotence,omitempty"`
+	Auto          *Kafka_Enable_Auto     `protobuf:"bytes,2,opt,name=auto,proto3" json:"auto,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -814,6 +839,189 @@ func (*Kafka_Enable) Descriptor() ([]byte, []int) {
 func (x *Kafka_Enable) GetIdepotence() string {
 	if x != nil {
 		return x.Idepotence
+	}
+	return ""
+}
+
+func (x *Kafka_Enable) GetAuto() *Kafka_Enable_Auto {
+	if x != nil {
+		return x.Auto
+	}
+	return nil
+}
+
+type Kafka_Group struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Kafka_Group) Reset() {
+	*x = Kafka_Group{}
+	mi := &file_conf_conf_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Kafka_Group) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Kafka_Group) ProtoMessage() {}
+
+func (x *Kafka_Group) ProtoReflect() protoreflect.Message {
+	mi := &file_conf_conf_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Kafka_Group.ProtoReflect.Descriptor instead.
+func (*Kafka_Group) Descriptor() ([]byte, []int) {
+	return file_conf_conf_proto_rawDescGZIP(), []int{6, 2}
+}
+
+func (x *Kafka_Group) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type Kafka_Auto struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Offset        *Kafka_Auto_Offset     `protobuf:"bytes,1,opt,name=offset,proto3" json:"offset,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Kafka_Auto) Reset() {
+	*x = Kafka_Auto{}
+	mi := &file_conf_conf_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Kafka_Auto) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Kafka_Auto) ProtoMessage() {}
+
+func (x *Kafka_Auto) ProtoReflect() protoreflect.Message {
+	mi := &file_conf_conf_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Kafka_Auto.ProtoReflect.Descriptor instead.
+func (*Kafka_Auto) Descriptor() ([]byte, []int) {
+	return file_conf_conf_proto_rawDescGZIP(), []int{6, 3}
+}
+
+func (x *Kafka_Auto) GetOffset() *Kafka_Auto_Offset {
+	if x != nil {
+		return x.Offset
+	}
+	return nil
+}
+
+type Kafka_Enable_Auto struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Commit        string                 `protobuf:"bytes,1,opt,name=commit,proto3" json:"commit,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Kafka_Enable_Auto) Reset() {
+	*x = Kafka_Enable_Auto{}
+	mi := &file_conf_conf_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Kafka_Enable_Auto) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Kafka_Enable_Auto) ProtoMessage() {}
+
+func (x *Kafka_Enable_Auto) ProtoReflect() protoreflect.Message {
+	mi := &file_conf_conf_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Kafka_Enable_Auto.ProtoReflect.Descriptor instead.
+func (*Kafka_Enable_Auto) Descriptor() ([]byte, []int) {
+	return file_conf_conf_proto_rawDescGZIP(), []int{6, 1, 0}
+}
+
+func (x *Kafka_Enable_Auto) GetCommit() string {
+	if x != nil {
+		return x.Commit
+	}
+	return ""
+}
+
+type Kafka_Auto_Offset struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Reset_        string                 `protobuf:"bytes,1,opt,name=reset,proto3" json:"reset,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Kafka_Auto_Offset) Reset() {
+	*x = Kafka_Auto_Offset{}
+	mi := &file_conf_conf_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Kafka_Auto_Offset) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Kafka_Auto_Offset) ProtoMessage() {}
+
+func (x *Kafka_Auto_Offset) ProtoReflect() protoreflect.Message {
+	mi := &file_conf_conf_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Kafka_Auto_Offset.ProtoReflect.Descriptor instead.
+func (*Kafka_Auto_Offset) Descriptor() ([]byte, []int) {
+	return file_conf_conf_proto_rawDescGZIP(), []int{6, 3, 0}
+}
+
+func (x *Kafka_Auto_Offset) GetReset_() string {
+	if x != nil {
+		return x.Reset_
 	}
 	return ""
 }
@@ -869,18 +1077,31 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\x06scheme\x18\x02 \x01(\tR\x06scheme\"a\n" +
 	"\tCacheMode\x12+\n" +
 	"\x11cache_penetration\x18\x01 \x01(\tR\x10cachePenetration\x12'\n" +
-	"\x0fcache_breakdown\x18\x02 \x01(\tR\x0ecacheBreakdown\"\xf3\x01\n" +
+	"\x0fcache_breakdown\x18\x02 \x01(\tR\x0ecacheBreakdown\"\xb8\x04\n" +
 	"\x05Kafka\x129\n" +
 	"\tbootstrap\x18\x01 \x01(\v2\x1b.kratos.api.Kafka.BootstrapR\tbootstrap\x120\n" +
 	"\x06enable\x18\x02 \x01(\v2\x18.kratos.api.Kafka.EnableR\x06enable\x12\x12\n" +
 	"\x04acks\x18\x03 \x01(\tR\x04acks\x12\x18\n" +
-	"\aretries\x18\x04 \x01(\x05R\aretries\x1a%\n" +
+	"\aretries\x18\x04 \x01(\x05R\aretries\x12-\n" +
+	"\x05group\x18\x05 \x01(\v2\x17.kratos.api.Kafka.GroupR\x05group\x12*\n" +
+	"\x04auto\x18\x06 \x01(\v2\x16.kratos.api.Kafka.AutoR\x04auto\x12\x1d\n" +
+	"\n" +
+	"sub_topics\x18\a \x03(\tR\tsubTopics\x1a%\n" +
 	"\tBootstrap\x12\x18\n" +
-	"\aservers\x18\x01 \x01(\tR\aservers\x1a(\n" +
+	"\aservers\x18\x01 \x01(\tR\aservers\x1a{\n" +
 	"\x06Enable\x12\x1e\n" +
 	"\n" +
 	"idepotence\x18\x01 \x01(\tR\n" +
-	"idepotenceB%Z#kratos-community/internal/conf;confb\x06proto3"
+	"idepotence\x121\n" +
+	"\x04auto\x18\x02 \x01(\v2\x1d.kratos.api.Kafka.Enable.AutoR\x04auto\x1a\x1e\n" +
+	"\x04Auto\x12\x16\n" +
+	"\x06commit\x18\x01 \x01(\tR\x06commit\x1a\x17\n" +
+	"\x05Group\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x1a]\n" +
+	"\x04Auto\x125\n" +
+	"\x06offset\x18\x01 \x01(\v2\x1d.kratos.api.Kafka.Auto.OffsetR\x06offset\x1a\x1e\n" +
+	"\x06Offset\x12\x14\n" +
+	"\x05reset\x18\x01 \x01(\tR\x05resetB%Z#kratos-community/internal/conf;confb\x06proto3"
 
 var (
 	file_conf_conf_proto_rawDescOnce sync.Once
@@ -894,7 +1115,7 @@ func file_conf_conf_proto_rawDescGZIP() []byte {
 	return file_conf_conf_proto_rawDescData
 }
 
-var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_conf_conf_proto_goTypes = []any{
 	(*Bootstrap)(nil),           // 0: kratos.api.Bootstrap
 	(*Server)(nil),              // 1: kratos.api.Server
@@ -911,7 +1132,11 @@ var file_conf_conf_proto_goTypes = []any{
 	(*Registry_Consul)(nil),     // 12: kratos.api.Registry.Consul
 	(*Kafka_Bootstrap)(nil),     // 13: kratos.api.Kafka.Bootstrap
 	(*Kafka_Enable)(nil),        // 14: kratos.api.Kafka.Enable
-	(*durationpb.Duration)(nil), // 15: google.protobuf.Duration
+	(*Kafka_Group)(nil),         // 15: kratos.api.Kafka.Group
+	(*Kafka_Auto)(nil),          // 16: kratos.api.Kafka.Auto
+	(*Kafka_Enable_Auto)(nil),   // 17: kratos.api.Kafka.Enable.Auto
+	(*Kafka_Auto_Offset)(nil),   // 18: kratos.api.Kafka.Auto.Offset
+	(*durationpb.Duration)(nil), // 19: google.protobuf.Duration
 }
 var file_conf_conf_proto_depIdxs = []int32{
 	1,  // 0: kratos.api.Bootstrap.server:type_name -> kratos.api.Server
@@ -927,16 +1152,20 @@ var file_conf_conf_proto_depIdxs = []int32{
 	12, // 10: kratos.api.Registry.consul:type_name -> kratos.api.Registry.Consul
 	13, // 11: kratos.api.Kafka.bootstrap:type_name -> kratos.api.Kafka.Bootstrap
 	14, // 12: kratos.api.Kafka.enable:type_name -> kratos.api.Kafka.Enable
-	15, // 13: kratos.api.Server.HTTP.timeout:type_name -> google.protobuf.Duration
-	15, // 14: kratos.api.Server.GRPC.timeout:type_name -> google.protobuf.Duration
-	15, // 15: kratos.api.Data.Redis.read_timeout:type_name -> google.protobuf.Duration
-	15, // 16: kratos.api.Data.Redis.write_timeout:type_name -> google.protobuf.Duration
-	9,  // 17: kratos.api.Data.DatabasesEntry.value:type_name -> kratos.api.Data.Database
-	18, // [18:18] is the sub-list for method output_type
-	18, // [18:18] is the sub-list for method input_type
-	18, // [18:18] is the sub-list for extension type_name
-	18, // [18:18] is the sub-list for extension extendee
-	0,  // [0:18] is the sub-list for field type_name
+	15, // 13: kratos.api.Kafka.group:type_name -> kratos.api.Kafka.Group
+	16, // 14: kratos.api.Kafka.auto:type_name -> kratos.api.Kafka.Auto
+	19, // 15: kratos.api.Server.HTTP.timeout:type_name -> google.protobuf.Duration
+	19, // 16: kratos.api.Server.GRPC.timeout:type_name -> google.protobuf.Duration
+	19, // 17: kratos.api.Data.Redis.read_timeout:type_name -> google.protobuf.Duration
+	19, // 18: kratos.api.Data.Redis.write_timeout:type_name -> google.protobuf.Duration
+	9,  // 19: kratos.api.Data.DatabasesEntry.value:type_name -> kratos.api.Data.Database
+	17, // 20: kratos.api.Kafka.Enable.auto:type_name -> kratos.api.Kafka.Enable.Auto
+	18, // 21: kratos.api.Kafka.Auto.offset:type_name -> kratos.api.Kafka.Auto.Offset
+	22, // [22:22] is the sub-list for method output_type
+	22, // [22:22] is the sub-list for method input_type
+	22, // [22:22] is the sub-list for extension type_name
+	22, // [22:22] is the sub-list for extension extendee
+	0,  // [0:22] is the sub-list for field type_name
 }
 
 func init() { file_conf_conf_proto_init() }
@@ -950,7 +1179,7 @@ func file_conf_conf_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_conf_conf_proto_rawDesc), len(file_conf_conf_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   15,
+			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
