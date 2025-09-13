@@ -10,6 +10,7 @@ import (
 	"kratos-community/internal/content/biz"
 	"kratos-community/internal/content/data"
 	"kratos-community/internal/content/service"
+	"kratos-community/internal/kafka"
 	"kratos-community/internal/registry"
 	"kratos-community/internal/server"
 
@@ -19,6 +20,6 @@ import (
 )
 
 // wireApp init kratos application.
-func wireApp(*conf.Server, *conf.Data, *conf.Auth, *conf.Registry,*conf.CacheMode,log.Logger) (*kratos.App, func(), error) {
-	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, registry.ProviderSet, newApp))
+func wireApp(*conf.Server, *conf.Data, *conf.Auth, *conf.Registry, *conf.CacheMode, *conf.Kafka, log.Logger) (*kratos.App, func(), error) {
+	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, registry.ProviderSet, kafka.ProviderSet, newApp))
 }

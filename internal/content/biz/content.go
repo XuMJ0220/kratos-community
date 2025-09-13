@@ -2,8 +2,10 @@ package biz
 
 import (
 	"context"
+	"strconv"
 
 	"kratos-community/internal/conf"
+	"kratos-community/internal/kafka"
 
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
@@ -18,6 +20,10 @@ var (
 	ErrAuthorizedDelete = errors.Forbidden("FORBINDEN", "无权删除")
 )
 
+var (
+	KAFKA_CREATE_ARTICLE_TOPIC = "article_created_topic"
+)
+
 // ContentRepo 与数据库交互的接口
 type ContentRepo interface {
 	CreateArtical(ctx context.Context, userid uint64, title, content string) (*Article, error)
@@ -28,9 +34,10 @@ type ContentRepo interface {
 }
 
 type ContentUsecase struct {
-	repo      ContentRepo
-	log       *log.Helper
-	jwtSecret string
+	repo        ContentRepo
+	log         *log.Helper
+	jwtSecret   string
+	kafkaClient *kafka.KafkaClient
 }
 
 type Article struct {
@@ -42,8 +49,8 @@ type Article struct {
 	UpdatedAt *timestamppb.Timestamp
 }
 
-func NewContentUsecase(repo ContentRepo, logger log.Logger, jwtScret *conf.Auth) *ContentUsecase {
-	return &ContentUsecase{repo: repo, log: log.NewHelper(logger), jwtSecret: jwtScret.JwtSecret}
+func NewContentUsecase(repo ContentRepo, logger log.Logger, jwtScret *conf.Auth, kafkaClient *kafka.KafkaClient) *ContentUsecase {
+	return &ContentUsecase{repo: repo, log: log.NewHelper(logger), jwtSecret: jwtScret.JwtSecret, kafkaClient: kafkaClient}
 }
 
 func (uc *ContentUsecase) CreArticle(ctx context.Context, authorID uint64, title, content string) (*Article, error) {
@@ -52,6 +59,13 @@ func (uc *ContentUsecase) CreArticle(ctx context.Context, authorID uint64, title
 	if err != nil {
 		return nil, err
 	}
+
+	// 往kafka中生产消息
+	err = uc.kafkaClient.ProducerMessage(KAFKA_CREATE_ARTICLE_TOPIC, strconv.FormatUint(article.Id, 10), strconv.FormatUint(article.AuthorId, 10), "", "")
+	if err != nil {
+		uc.log.Errorf("ProducerMessage to kafka failed, err: %v", err)
+	}
+	
 	// 2.返回结果
 	return &Article{
 		Id:        article.Id,

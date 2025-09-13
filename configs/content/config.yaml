@@ -27,3 +27,10 @@ registry:
     scheme: "http"
 cacheMode:
   cache_penetration: "1" #1: 设置空缓存模式 2: 设置布隆过滤器模式 
+kaf:
+  bootstrap: 
+    servers: "192.168.192.1:9092,192.168.192.1:9093,192.168.192.1:9094"
+  enable:
+    idepotence: "true"
+  acks: "all"
+  retries: 3

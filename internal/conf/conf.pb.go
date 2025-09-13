@@ -29,6 +29,7 @@ type Bootstrap struct {
 	Auth          *Auth                  `protobuf:"bytes,3,opt,name=auth,proto3" json:"auth,omitempty"`
 	Registry      *Registry              `protobuf:"bytes,4,opt,name=registry,proto3" json:"registry,omitempty"`
 	CacheMode     *CacheMode             `protobuf:"bytes,5,opt,name=cache_mode,json=cacheMode,proto3" json:"cache_mode,omitempty"`
+	Kaf           *Kafka                 `protobuf:"bytes,6,opt,name=kaf,proto3" json:"kaf,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -94,6 +95,13 @@ func (x *Bootstrap) GetRegistry() *Registry {
 func (x *Bootstrap) GetCacheMode() *CacheMode {
 	if x != nil {
 		return x.CacheMode
+	}
+	return nil
+}
+
+func (x *Bootstrap) GetKaf() *Kafka {
+	if x != nil {
+		return x.Kaf
 	}
 	return nil
 }
@@ -345,6 +353,75 @@ func (x *CacheMode) GetCacheBreakdown() string {
 	return ""
 }
 
+// kafka 配置
+type Kafka struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Bootstrap     *Kafka_Bootstrap       `protobuf:"bytes,1,opt,name=bootstrap,proto3" json:"bootstrap,omitempty"`
+	Enable        *Kafka_Enable          `protobuf:"bytes,2,opt,name=enable,proto3" json:"enable,omitempty"`
+	Acks          string                 `protobuf:"bytes,3,opt,name=acks,proto3" json:"acks,omitempty"`
+	Retries       int32                  `protobuf:"varint,4,opt,name=retries,proto3" json:"retries,omitempty"` // 重试次数
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Kafka) Reset() {
+	*x = Kafka{}
+	mi := &file_conf_conf_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Kafka) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Kafka) ProtoMessage() {}
+
+func (x *Kafka) ProtoReflect() protoreflect.Message {
+	mi := &file_conf_conf_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Kafka.ProtoReflect.Descriptor instead.
+func (*Kafka) Descriptor() ([]byte, []int) {
+	return file_conf_conf_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *Kafka) GetBootstrap() *Kafka_Bootstrap {
+	if x != nil {
+		return x.Bootstrap
+	}
+	return nil
+}
+
+func (x *Kafka) GetEnable() *Kafka_Enable {
+	if x != nil {
+		return x.Enable
+	}
+	return nil
+}
+
+func (x *Kafka) GetAcks() string {
+	if x != nil {
+		return x.Acks
+	}
+	return ""
+}
+
+func (x *Kafka) GetRetries() int32 {
+	if x != nil {
+		return x.Retries
+	}
+	return 0
+}
+
 type Server_HTTP struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Network       string                 `protobuf:"bytes,1,opt,name=network,proto3" json:"network,omitempty"`
@@ -356,7 +433,7 @@ type Server_HTTP struct {
 
 func (x *Server_HTTP) Reset() {
 	*x = Server_HTTP{}
-	mi := &file_conf_conf_proto_msgTypes[6]
+	mi := &file_conf_conf_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -368,7 +445,7 @@ func (x *Server_HTTP) String() string {
 func (*Server_HTTP) ProtoMessage() {}
 
 func (x *Server_HTTP) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[6]
+	mi := &file_conf_conf_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -416,7 +493,7 @@ type Server_GRPC struct {
 
 func (x *Server_GRPC) Reset() {
 	*x = Server_GRPC{}
-	mi := &file_conf_conf_proto_msgTypes[7]
+	mi := &file_conf_conf_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -428,7 +505,7 @@ func (x *Server_GRPC) String() string {
 func (*Server_GRPC) ProtoMessage() {}
 
 func (x *Server_GRPC) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[7]
+	mi := &file_conf_conf_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -475,7 +552,7 @@ type Data_Database struct {
 
 func (x *Data_Database) Reset() {
 	*x = Data_Database{}
-	mi := &file_conf_conf_proto_msgTypes[8]
+	mi := &file_conf_conf_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -487,7 +564,7 @@ func (x *Data_Database) String() string {
 func (*Data_Database) ProtoMessage() {}
 
 func (x *Data_Database) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[8]
+	mi := &file_conf_conf_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -531,7 +608,7 @@ type Data_Redis struct {
 
 func (x *Data_Redis) Reset() {
 	*x = Data_Redis{}
-	mi := &file_conf_conf_proto_msgTypes[9]
+	mi := &file_conf_conf_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -543,7 +620,7 @@ func (x *Data_Redis) String() string {
 func (*Data_Redis) ProtoMessage() {}
 
 func (x *Data_Redis) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[9]
+	mi := &file_conf_conf_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -611,7 +688,7 @@ type Registry_Consul struct {
 
 func (x *Registry_Consul) Reset() {
 	*x = Registry_Consul{}
-	mi := &file_conf_conf_proto_msgTypes[11]
+	mi := &file_conf_conf_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -623,7 +700,7 @@ func (x *Registry_Consul) String() string {
 func (*Registry_Consul) ProtoMessage() {}
 
 func (x *Registry_Consul) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[11]
+	mi := &file_conf_conf_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -653,19 +730,108 @@ func (x *Registry_Consul) GetScheme() string {
 	return ""
 }
 
+type Kafka_Bootstrap struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Servers       string                 `protobuf:"bytes,1,opt,name=servers,proto3" json:"servers,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Kafka_Bootstrap) Reset() {
+	*x = Kafka_Bootstrap{}
+	mi := &file_conf_conf_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Kafka_Bootstrap) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Kafka_Bootstrap) ProtoMessage() {}
+
+func (x *Kafka_Bootstrap) ProtoReflect() protoreflect.Message {
+	mi := &file_conf_conf_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Kafka_Bootstrap.ProtoReflect.Descriptor instead.
+func (*Kafka_Bootstrap) Descriptor() ([]byte, []int) {
+	return file_conf_conf_proto_rawDescGZIP(), []int{6, 0}
+}
+
+func (x *Kafka_Bootstrap) GetServers() string {
+	if x != nil {
+		return x.Servers
+	}
+	return ""
+}
+
+type Kafka_Enable struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Idepotence    string                 `protobuf:"bytes,1,opt,name=idepotence,proto3" json:"idepotence,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Kafka_Enable) Reset() {
+	*x = Kafka_Enable{}
+	mi := &file_conf_conf_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Kafka_Enable) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Kafka_Enable) ProtoMessage() {}
+
+func (x *Kafka_Enable) ProtoReflect() protoreflect.Message {
+	mi := &file_conf_conf_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Kafka_Enable.ProtoReflect.Descriptor instead.
+func (*Kafka_Enable) Descriptor() ([]byte, []int) {
+	return file_conf_conf_proto_rawDescGZIP(), []int{6, 1}
+}
+
+func (x *Kafka_Enable) GetIdepotence() string {
+	if x != nil {
+		return x.Idepotence
+	}
+	return ""
+}
+
 var File_conf_conf_proto protoreflect.FileDescriptor
 
 const file_conf_conf_proto_rawDesc = "" +
 	"\n" +
 	"\x0fconf/conf.proto\x12\n" +
-	"kratos.api\x1a\x1egoogle/protobuf/duration.proto\"\xeb\x01\n" +
+	"kratos.api\x1a\x1egoogle/protobuf/duration.proto\"\x90\x02\n" +
 	"\tBootstrap\x12*\n" +
 	"\x06server\x18\x01 \x01(\v2\x12.kratos.api.ServerR\x06server\x12$\n" +
 	"\x04data\x18\x02 \x01(\v2\x10.kratos.api.DataR\x04data\x12$\n" +
 	"\x04auth\x18\x03 \x01(\v2\x10.kratos.api.AuthR\x04auth\x120\n" +
 	"\bregistry\x18\x04 \x01(\v2\x14.kratos.api.RegistryR\bregistry\x124\n" +
 	"\n" +
-	"cache_mode\x18\x05 \x01(\v2\x15.kratos.api.CacheModeR\tcacheMode\"\xb8\x02\n" +
+	"cache_mode\x18\x05 \x01(\v2\x15.kratos.api.CacheModeR\tcacheMode\x12#\n" +
+	"\x03kaf\x18\x06 \x01(\v2\x11.kratos.api.KafkaR\x03kaf\"\xb8\x02\n" +
 	"\x06Server\x12+\n" +
 	"\x04http\x18\x01 \x01(\v2\x17.kratos.api.Server.HTTPR\x04http\x12+\n" +
 	"\x04grpc\x18\x02 \x01(\v2\x17.kratos.api.Server.GRPCR\x04grpc\x1ai\n" +
@@ -703,7 +869,18 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\x06scheme\x18\x02 \x01(\tR\x06scheme\"a\n" +
 	"\tCacheMode\x12+\n" +
 	"\x11cache_penetration\x18\x01 \x01(\tR\x10cachePenetration\x12'\n" +
-	"\x0fcache_breakdown\x18\x02 \x01(\tR\x0ecacheBreakdownB%Z#kratos-community/internal/conf;confb\x06proto3"
+	"\x0fcache_breakdown\x18\x02 \x01(\tR\x0ecacheBreakdown\"\xf3\x01\n" +
+	"\x05Kafka\x129\n" +
+	"\tbootstrap\x18\x01 \x01(\v2\x1b.kratos.api.Kafka.BootstrapR\tbootstrap\x120\n" +
+	"\x06enable\x18\x02 \x01(\v2\x18.kratos.api.Kafka.EnableR\x06enable\x12\x12\n" +
+	"\x04acks\x18\x03 \x01(\tR\x04acks\x12\x18\n" +
+	"\aretries\x18\x04 \x01(\x05R\aretries\x1a%\n" +
+	"\tBootstrap\x12\x18\n" +
+	"\aservers\x18\x01 \x01(\tR\aservers\x1a(\n" +
+	"\x06Enable\x12\x1e\n" +
+	"\n" +
+	"idepotence\x18\x01 \x01(\tR\n" +
+	"idepotenceB%Z#kratos-community/internal/conf;confb\x06proto3"
 
 var (
 	file_conf_conf_proto_rawDescOnce sync.Once
@@ -717,7 +894,7 @@ func file_conf_conf_proto_rawDescGZIP() []byte {
 	return file_conf_conf_proto_rawDescData
 }
 
-var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_conf_conf_proto_goTypes = []any{
 	(*Bootstrap)(nil),           // 0: kratos.api.Bootstrap
 	(*Server)(nil),              // 1: kratos.api.Server
@@ -725,13 +902,16 @@ var file_conf_conf_proto_goTypes = []any{
 	(*Auth)(nil),                // 3: kratos.api.Auth
 	(*Registry)(nil),            // 4: kratos.api.Registry
 	(*CacheMode)(nil),           // 5: kratos.api.CacheMode
-	(*Server_HTTP)(nil),         // 6: kratos.api.Server.HTTP
-	(*Server_GRPC)(nil),         // 7: kratos.api.Server.GRPC
-	(*Data_Database)(nil),       // 8: kratos.api.Data.Database
-	(*Data_Redis)(nil),          // 9: kratos.api.Data.Redis
-	nil,                         // 10: kratos.api.Data.DatabasesEntry
-	(*Registry_Consul)(nil),     // 11: kratos.api.Registry.Consul
-	(*durationpb.Duration)(nil), // 12: google.protobuf.Duration
+	(*Kafka)(nil),               // 6: kratos.api.Kafka
+	(*Server_HTTP)(nil),         // 7: kratos.api.Server.HTTP
+	(*Server_GRPC)(nil),         // 8: kratos.api.Server.GRPC
+	(*Data_Database)(nil),       // 9: kratos.api.Data.Database
+	(*Data_Redis)(nil),          // 10: kratos.api.Data.Redis
+	nil,                         // 11: kratos.api.Data.DatabasesEntry
+	(*Registry_Consul)(nil),     // 12: kratos.api.Registry.Consul
+	(*Kafka_Bootstrap)(nil),     // 13: kratos.api.Kafka.Bootstrap
+	(*Kafka_Enable)(nil),        // 14: kratos.api.Kafka.Enable
+	(*durationpb.Duration)(nil), // 15: google.protobuf.Duration
 }
 var file_conf_conf_proto_depIdxs = []int32{
 	1,  // 0: kratos.api.Bootstrap.server:type_name -> kratos.api.Server
@@ -739,21 +919,24 @@ var file_conf_conf_proto_depIdxs = []int32{
 	3,  // 2: kratos.api.Bootstrap.auth:type_name -> kratos.api.Auth
 	4,  // 3: kratos.api.Bootstrap.registry:type_name -> kratos.api.Registry
 	5,  // 4: kratos.api.Bootstrap.cache_mode:type_name -> kratos.api.CacheMode
-	6,  // 5: kratos.api.Server.http:type_name -> kratos.api.Server.HTTP
-	7,  // 6: kratos.api.Server.grpc:type_name -> kratos.api.Server.GRPC
-	10, // 7: kratos.api.Data.databases:type_name -> kratos.api.Data.DatabasesEntry
-	9,  // 8: kratos.api.Data.redis:type_name -> kratos.api.Data.Redis
-	11, // 9: kratos.api.Registry.consul:type_name -> kratos.api.Registry.Consul
-	12, // 10: kratos.api.Server.HTTP.timeout:type_name -> google.protobuf.Duration
-	12, // 11: kratos.api.Server.GRPC.timeout:type_name -> google.protobuf.Duration
-	12, // 12: kratos.api.Data.Redis.read_timeout:type_name -> google.protobuf.Duration
-	12, // 13: kratos.api.Data.Redis.write_timeout:type_name -> google.protobuf.Duration
-	8,  // 14: kratos.api.Data.DatabasesEntry.value:type_name -> kratos.api.Data.Database
-	15, // [15:15] is the sub-list for method output_type
-	15, // [15:15] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	6,  // 5: kratos.api.Bootstrap.kaf:type_name -> kratos.api.Kafka
+	7,  // 6: kratos.api.Server.http:type_name -> kratos.api.Server.HTTP
+	8,  // 7: kratos.api.Server.grpc:type_name -> kratos.api.Server.GRPC
+	11, // 8: kratos.api.Data.databases:type_name -> kratos.api.Data.DatabasesEntry
+	10, // 9: kratos.api.Data.redis:type_name -> kratos.api.Data.Redis
+	12, // 10: kratos.api.Registry.consul:type_name -> kratos.api.Registry.Consul
+	13, // 11: kratos.api.Kafka.bootstrap:type_name -> kratos.api.Kafka.Bootstrap
+	14, // 12: kratos.api.Kafka.enable:type_name -> kratos.api.Kafka.Enable
+	15, // 13: kratos.api.Server.HTTP.timeout:type_name -> google.protobuf.Duration
+	15, // 14: kratos.api.Server.GRPC.timeout:type_name -> google.protobuf.Duration
+	15, // 15: kratos.api.Data.Redis.read_timeout:type_name -> google.protobuf.Duration
+	15, // 16: kratos.api.Data.Redis.write_timeout:type_name -> google.protobuf.Duration
+	9,  // 17: kratos.api.Data.DatabasesEntry.value:type_name -> kratos.api.Data.Database
+	18, // [18:18] is the sub-list for method output_type
+	18, // [18:18] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_conf_conf_proto_init() }
@@ -767,7 +950,7 @@ func file_conf_conf_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_conf_conf_proto_rawDesc), len(file_conf_conf_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

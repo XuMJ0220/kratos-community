@@ -13,6 +13,7 @@ import (
 	"kratos-community/internal/content/biz"
 	"kratos-community/internal/content/data"
 	"kratos-community/internal/content/service"
+	"kratos-community/internal/kafka"
 	"kratos-community/internal/registry"
 	"kratos-community/internal/server"
 )
@@ -24,7 +25,7 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, confRegistry *conf.Registry, cacheMode *conf.CacheMode, logger log.Logger) (*kratos.App, func(), error) {
+func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, confRegistry *conf.Registry, cacheMode *conf.CacheMode, confKafka *conf.Kafka, logger log.Logger) (*kratos.App, func(), error) {
 	grpcServer := server.NewGRPCServer(confServer, auth, logger)
 	httpServer := server.NewHTTPServer(confServer, auth, logger)
 	db, err := data.NewDB(confData, logger)
@@ -40,11 +41,17 @@ func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, conf
 		return nil, nil, err
 	}
 	contentRepo := data.NewContentRepo(dataData, logger, cacheMode)
-	contentUsecase := biz.NewContentUsecase(contentRepo, logger, auth)
+	kafkaClient, cleanup2, err := kafka.NewKafkaClient(confKafka, logger)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	contentUsecase := biz.NewContentUsecase(contentRepo, logger, auth, kafkaClient)
 	contentService := service.NewContentService(contentUsecase)
 	registrar := registry.NewRegistry(confRegistry)
 	app := newApp(logger, grpcServer, httpServer, contentService, registrar)
 	return app, func() {
+		cleanup2()
 		cleanup()
 	}, nil
 }

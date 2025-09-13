@@ -11,6 +11,8 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	jwtv5 "github.com/golang-jwt/jwt/v5"
+
+	
 )
 
 // NewHTTPServer new an HTTP server.
@@ -54,6 +56,8 @@ func NewHTTPServer(c *conf.Server, auth *conf.Auth, logger log.Logger) *http.Ser
 		}).Build(),
 	))
 
+	
+
 	if c.Http.Network != "" {
 		opts = append(opts, http.Network(c.Http.Network))
 	}
@@ -64,5 +68,6 @@ func NewHTTPServer(c *conf.Server, auth *conf.Auth, logger log.Logger) *http.Ser
 		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
 	}
 	srv := http.NewServer(opts...)
+	
 	return srv
 }

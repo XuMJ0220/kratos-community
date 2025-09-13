@@ -11,6 +11,7 @@ message Bootstrap {
   Auth auth = 3;
   Registry registry = 4;
   CacheMode cache_mode = 5;
+  Kafka kaf = 6;
 }
 
 message Server {
@@ -63,4 +64,18 @@ message Registry{
 message CacheMode{
   string cache_penetration = 1; // 防止缓存穿透模式
   string cache_breakdown = 2; // 防止缓存击穿模式
+}
+
+// kafka 配置 
+message Kafka{
+  message Bootstrap{
+    string servers = 1;
+  }
+  message Enable{
+    string idepotence = 1;
+  }
+  Bootstrap bootstrap = 1;
+  Enable enable = 2;
+  string acks = 3; 
+  int32 retries = 4; // 重试次数
 }

@@ -109,6 +109,25 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.user.v1.RegisterUserReply'
+    /v1/users/list:
+        post:
+            tags:
+                - User
+            description: 根据ID列表批量获取用户信息
+            operationId: User_ListUsers
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.user.v1.ListUsersRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.user.v1.ListUsersReply'
     /v1/users/{id}/follow:
         post:
             tags:
@@ -375,6 +394,20 @@ components:
         api.relation.v1.UnfollowUserReply:
             type: object
             properties: {}
+        api.user.v1.ListUsersReply:
+            type: object
+            properties:
+                users:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/api.user.v1.UserInfo'
+        api.user.v1.ListUsersRequest:
+            type: object
+            properties:
+                ids:
+                    type: array
+                    items:
+                        type: string
         api.user.v1.LoginReply:
             type: object
             properties:
