@@ -58,8 +58,8 @@ func (s *NotificationServer) Start(ctx context.Context) error {
 				// 调用biz层的业务来处理消息
 				// 注意，这里我们新开一个goroutine去处理，避免耗时的业务阻塞下一条消息的消费
 				go func() {
-					followingId, _ := strconv.Atoi(string(msg.Key))
-					articleId, _ := strconv.Atoi(string(msg.Value))
+					followingId, _ := strconv.Atoi(string(msg.Value))
+					articleId, _ := strconv.Atoi(string(msg.Key))
 					if err := s.uc.NotifyFollowers(context.Background(), uint64(followingId), uint64(articleId)); err != nil {
 						s.log.Errorf("!!! 处理消息错误: %v\n", err)
 					}

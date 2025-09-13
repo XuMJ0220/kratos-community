@@ -3,7 +3,7 @@ package kafka
 import (
 	"kratos-community/internal/conf"
 
-	"github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 )
@@ -118,12 +118,12 @@ func NewKafkaConsumerClient(kaf *conf.Kafka, logger log.Logger) (*KafkaConsumerC
 	}
 
 	// 3. 订阅主题
-	err = c.SubscribeTopics(kaf.SubTopics,nil)
-	if err!=nil{
+	err = c.SubscribeTopics(kaf.SubTopics, nil)
+	if err != nil {
 		log.Errorf("kafka消费者订阅主题失败, err: %v", err)
 		return nil, nil, err
 	}
-	
+
 	cleanup := func() {
 		log.Info("closing kafka consumer")
 		c.Close()

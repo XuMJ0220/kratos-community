@@ -5,7 +5,6 @@ go 1.23.8
 toolchain go1.24.5
 
 require (
-	github.com/confluentinc/confluent-kafka-go v1.9.2
 	github.com/confluentinc/confluent-kafka-go/v2 v2.11.1
 	github.com/envoyproxy/protoc-gen-validate v1.2.1
 	github.com/go-kratos/kratos/contrib/registry/consul/v2 v2.0.0-20250828133012-308cfee50a57
