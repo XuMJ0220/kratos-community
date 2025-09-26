@@ -15,7 +15,23 @@ type Article struct {
     DeletedAt gorm.DeletedAt `gorm:"index:idx_deleted_at;comment:删除时间" json:"deleted_at"` // 修正：补充索引标签
 }
 
+// OutboxMessage 事务性发件箱表
+type OutboxMessage struct {
+	ID           uint64    `gorm:"primaryKey;autoIncrement;comment:主键"`
+	Topic        string    `gorm:"type:varchar(255);not null;comment:kafka topic"`
+	MessageKey   string    `gorm:"type:varchar(255);not null;comment:消息 Key"`
+	MessageValue string    `gorm:"type:varchar(255);not null;comment:消息 Value"`
+	Status       uint8     `gorm:"type:tinyint;not null;default:0;comment:状态: 0-待发送, 1-已发送"`
+	CreatedAt    time.Time `gorm:"not null;default:CURRENT_TIMESTAMP;comment:创建时间"`
+	UpdatedAt    time.Time `gorm:"not null;default:CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;comment:更新时间"`
+}
+
 // TableName 指定表名
 func (Article) TableName() string {
     return "articles"
+}
+
+// TableName 指定 GORM 应该将此模型映射到哪个表。
+func (OutboxMessage) TableName() string {
+	return "outbox_messages"
 }

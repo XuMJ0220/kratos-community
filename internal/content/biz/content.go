@@ -31,6 +31,8 @@ type ContentRepo interface {
 	UpdateArticle(ctx context.Context, articleId uint64, title, content string) error
 	DeleteArticle(ctx context.Context, articleId uint64) error
 	DeleteArticleCache(ctx context.Context, articleId uint64) error
+	// // CreateArticleInTx 在事务中创建文章且往outbox中插入一条需要往kafka生产的消息
+	// CreateArticleInTx(ctx context.Context, tx *gorm.DB, article *Article) (*Article, error)
 }
 
 type ContentUsecase struct {
@@ -65,7 +67,7 @@ func (uc *ContentUsecase) CreArticle(ctx context.Context, authorID uint64, title
 	if err != nil {
 		uc.log.Errorf("ProducerMessage to kafka failed, err: %v", err)
 	}
-	
+
 	// 2.返回结果
 	return &Article{
 		Id:        article.Id,

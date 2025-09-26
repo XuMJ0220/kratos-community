@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 
 	"kratos-community/internal/conf"
 	"kratos-community/internal/content/biz"
 	"kratos-community/internal/pkg/redislock"
-	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-redis/redis"
@@ -150,6 +150,45 @@ func (c *contentRepo) GetArticle(ctx context.Context, articleId uint64) (*biz.Ar
 
 	return v.(*biz.Article), nil
 }
+
+// func (c *contentRepo) GetArticle(ctx context.Context, articleId uint64) (*biz.Article, error) {
+// 	c.log.Infof("Get article from mysql for articleId: %d", articleId)
+
+// 	// 直接从 MySQL 数据库中查询
+// 	var article Article
+// 	err := c.data.db1.WithContext(ctx).Where("id = ?", articleId).First(&article).Error
+
+// 	// 处理查询过程中可能发生的错误
+// 	if err != nil {
+// 		c.log.Errorf("GetArticle from mysql error: %v", err) // 输出错误日志
+
+// 		// 检查错误是否为“记录未找到”
+// 		if errors.Is(err, gorm.ErrRecordNotFound) {
+// 			return nil, biz.ErrArticleNotFound // 返回业务定义的“文章未找到”错误
+// 		} else {
+// 			// 对于其他类型的数据库错误，返回通用错误
+// 			return nil, biz.ErrInternalServer
+// 		}
+// 	}
+
+// 	// 检查文章是否已被软删除
+// 	if article.DeletedAt.Valid {
+// 		return nil, biz.ErrArticleNotFound
+// 	}
+
+// 	// 将从数据库中获取的数据模型 (Article) 转换为业务逻辑层模型 (biz.Article)
+// 	bizArticle := biz.Article{
+// 		Id:        articleId,
+// 		Title:     article.Title,
+// 		Content:   article.Content,
+// 		AuthorId:  article.AuthorID,
+// 		CreatedAt: timestamppb.New(article.CreatedAt),
+// 		UpdatedAt: timestamppb.New(article.UpdatedAt),
+// 	}
+
+// 	// 返回转换后的业务模型
+// 	return &bizArticle, nil
+// }
 
 func (c *contentRepo) UpdateArticle(ctx context.Context, articleId uint64, title, content string) error {
 	// 从数据库执行更新操作
